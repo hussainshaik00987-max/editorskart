@@ -1,4 +1,4 @@
-# Snapja Editor Studio
+# Sihu Editor Studio
 
 A responsive editor-focused website with an animated CSS 3D workspace and an eight-step partner profile prototype.
 

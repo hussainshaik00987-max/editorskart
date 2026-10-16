@@ -1,11 +1,11 @@
 const $=s=>document.querySelector(s), modal=$('#application');
 const steps=['Your craft','About you','Contact','Location','Your toolkit','Portfolio','Preferences','Review'];
 let data={category:'Editor',niches:[]},step=0,complete=false;
-try{data={...data,...JSON.parse(localStorage.getItem('snapja-draft')||'{}')}}catch{}
+try{data={...data,...JSON.parse((localStorage.getItem('sihu-draft') || localStorage.getItem('snapja-draft'))||'{}')}}catch{}
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const input=(label,key,type='text',placeholder='',required=true)=>`<label>${label}${required?' *':''}<input name="${key}" type="${type}" value="${esc(data[key])}" placeholder="${placeholder}" ${required?'required':''}></label>`;
 const select=(label,key,options)=>`<label>${label} *<select name="${key}" required><option value="">Select ${label.toLowerCase()}</option>${options.map(x=>`<option ${data[key]===x?'selected':''}>${x}</option>`).join('')}</select></label>`;
-function save(){try{localStorage.setItem('snapja-draft',JSON.stringify(data))}catch{}}
+function save(){try{localStorage.setItem('sihu-draft',JSON.stringify(data))}catch{}}
 function capture(){new FormData($('#form')).forEach((v,k)=>{data[k]=v});save()}
 function toast(t){$('#toast').textContent=t;$('#toast').style.opacity=1;setTimeout(()=>$('#toast').style.opacity=0,3000)}
 function render(){
@@ -21,7 +21,7 @@ function render(){
  if(step===4)body=select('Primary software','software',['Adobe Premiere Pro','DaVinci Resolve','Final Cut Pro','After Effects','Blender','CapCut','Other'])+input('Years of experience','experience','number','e.g. 2')+'<label>Your specialties · choose up to 5 *</label><div class="choices">'+['Social media','Motion design','Weddings','Brand films','Color grading','Visual effects','Travel','Product films'].map(x=>`<button type="button" class="choice ${data.niches.includes(x)?'selected':''}" data-niche="${x}">${x}</button>`).join('')+'</div>';
  if(step===5)body=input('Instagram username','instagram','text','@yourusername')+input('Portfolio link','portfolio','url','https://yourportfolio.com',false)+'<p style="font-size:11px;color:#9aa68b">Use a public Instagram profile. Portfolio links can include your website, YouTube, or a shared collection.</p>';
  if(step===6)body=select('Availability','availability',['Open to projects','Part-time','Full-time','Weekends'])+select('Work preference','work',['Remote','On location','Both'])+input('A few words about your style','bio','text','Cinematic cuts with a human touch',false);
- if(step===7)body='<div class="summary">'+[['Craft',data.category],['Name',data.name],['Email',data.email],['Location',[data.city,data.state,data.country].filter(Boolean).join(', ')],['Software',data.software],['Specialties',data.niches.join(', ')],['Instagram',data.instagram],['Availability',data.availability]].map(([k,v])=>`<div><small>${k}</small>${esc(v)}</div>`).join('')+'</div><label><input type="checkbox" name="consent" required> I understand this is a local demo and nothing is sent to Snapja.</label>';
+ if(step===7)body='<div class="summary">'+[['Craft',data.category],['Name',data.name],['Email',data.email],['Location',[data.city,data.state,data.country].filter(Boolean).join(', ')],['Software',data.software],['Specialties',data.niches.join(', ')],['Instagram',data.instagram],['Availability',data.availability]].map(([k,v])=>`<div><small>${k}</small>${esc(v)}</div>`).join('')+'</div><label><input type="checkbox" name="consent" required> I understand this is a local demo and nothing is sent to Sihu.</label>';
  $('#fields').innerHTML=`<div class="eyebrow">STEP ${step+1} OF 8 · ${steps[step].toUpperCase()}</div><h2>${titles[step]}</h2><p>${descriptions[step]}</p>${body}`;
  if(step===4){const n=$('[name=experience]');n.min=0;n.max=80}
  $('#fields').querySelectorAll('[data-category]').forEach(b=>b.onclick=()=>{data.category=b.dataset.category;save();render()});
