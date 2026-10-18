@@ -1,0 +1,25 @@
+{
+  "name": "Sihu — Creators & Editors",
+  "short_name": "Sihu",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090909",
+  "theme_color": "#ffd500",
+  "description": "Watch 30-second skill reels and hire verified video editors, reel makers, and photographers in 1 tap.",
+  "icons": [
+    {
+      "src": "assets/cinematic-mountains.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/cinematic-mountains.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
