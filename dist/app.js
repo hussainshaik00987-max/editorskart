@@ -15,11 +15,11 @@ function render(){
  const titles=['What do you create?','Tell us about you.','Let’s stay connected.','Where are you based?','Tools of your trade.','Show your signature.','Make it your own.','Ready for your next chapter?'];
  const descriptions=['Choose the craft that feels most like you.','Give your creative profile a personal touch.','Add the details you would use for booking notifications.','A local starting point. A world of possibilities.','The software and specialties behind your best work.','Let your portfolio do the talking.','Tell us how you like to work.','Review your profile. Verify your email next to submit it securely for admin review.'];
  let body='';
- if(step===0)body=`<div class="choices">${['Reel Maker','Photographer','Videographer','Drone Pilot','Editor','UGC Creator'].map((x,i)=>`<button type="button" class="choice ${data.category===x?'selected':''}" data-category="${x}">${['◧','◎','▣','✧','✂','✦'][i]} &nbsp; ${x}</button>`).join('')}</div>`;
+ if(step===0)body=`<div class="choices">${['Reel Maker','Editor','Graphic Designer','Photo Editor','Photographer','Videographer','Drone Pilot','UGC Creator'].map((x,i)=>`<button type="button" class="choice ${data.category===x?'selected':''}" data-category="${x}">${['◧','✂','🎨','📸','◎','▣','✧','✦'][i]} &nbsp; ${x}</button>`).join('')}</div>`;
  if(step===1)body=input('Full name','name','text','Your creative identity')+input('Date of birth','dob','date')+select('Gender','gender',['Female','Male','Non-binary','Prefer not to say'])+'<p style="font-size:11px;color:#9aa68b">Partner applicants must be 18 or older.</p>';
  if(step===2)body=input('Email address','email','email','you@example.com')+input('Phone number','phone','tel','+91 98765 43210');
  if(step===3)body=input('Country','country','text','India')+input('State / Province','state','text','Your state')+input('City','city','text','Your city');
- if(step===4)body='<fieldset class="software-options"><legend>Software you use *</legend><p>Select all that apply.</p><div class="choices">'+['Adobe Premiere Pro','DaVinci Resolve','Final Cut Pro','After Effects','Blender','CapCut','Other'].map(x=>`<label class="choice software-choice"><input type="checkbox" name="software" value="${x}" ${data.software.includes(x)?'checked':''}> <span>${x}</span></label>`).join('')+'</div></fieldset>'+input('Years of experience','experience','number','e.g. 2')+'<label>Your specialties · choose up to 5 *</label><div class="choices">'+['Social media','Motion design','Weddings','Brand films','Color grading','Visual effects','Travel','Product films'].map(x=>`<button type="button" class="choice ${data.niches.includes(x)?'selected':''}" data-niche="${x}">${x}</button>`).join('')+'</div>';
+ if(step===4)body='<fieldset class="software-options"><legend>Software you use *</legend><p>Select all that apply.</p><div class="choices">'+['Adobe Premiere Pro','DaVinci Resolve','Photoshop','Lightroom','Illustrator','After Effects','CapCut','Final Cut Pro','Blender','Other'].map(x=>`<label class="choice software-choice"><input type="checkbox" name="software" value="${x}" ${data.software.includes(x)?'checked':''}> <span>${x}</span></label>`).join('')+'</div></fieldset>'+input('Years of experience','experience','number','e.g. 2')+'<label>Your specialties · choose up to 5 *</label><div class="choices">'+['Thumbnails & Posters','Photo Retouching','Social media','Motion design','Weddings','Brand films','Color grading','Visual effects','Travel','Product films'].map(x=>`<button type="button" class="choice ${data.niches.includes(x)?'selected':''}" data-niche="${x}">${x}</button>`).join('')+'</div>';
  if(step===5)body=input('Instagram username','instagram','text','@yourusername')+input('Portfolio link','portfolio','url','https://yourportfolio.com',false)+'<p style="font-size:11px;color:#9aa68b">Use a public Instagram profile. Portfolio links can include your website, YouTube, or a shared collection.</p>';
  if(step===6)body=select('Availability','availability',['Open to projects','Part-time','Full-time','Weekends'])+select('Work preference','work',['Remote','On location','Both'])+input('A few words about your style','bio','text','Cinematic cuts with a human touch',false);
  if(step===7)body='<div class="summary">'+[['Craft',data.category],['Name',data.name],['Email',data.email],['Location',[data.city,data.state,data.country].filter(Boolean).join(', ')],['Software',data.software.join(', ')],['Specialties',data.niches.join(', ')],['Instagram',data.instagram],['Availability',data.availability]].map(([k,v])=>`<div><small>${k}</small>${esc(v)}</div>`).join('')+'</div><label><input type="checkbox" name="consent" required> I agree to share these details with Sihu for application review.</label>';
@@ -86,13 +86,15 @@ function renderDynamicReels() {
     const approvedCardsHtml = approved.map((c, i) => {
       let cat = (c.category || 'cinematic').toLowerCase();
       let categoryClass = 'cinematic';
-      if (cat.includes('iphone') || cat.includes('30-min') || cat.includes('express')) categoryClass = 'iphone viral';
+      if (cat.includes('graphic') || cat.includes('design') || cat.includes('thumbnail')) categoryClass = 'graphic';
+      else if (cat.includes('photo') || cat.includes('retouch') || cat.includes('lightroom')) categoryClass = 'photo';
+      else if (cat.includes('iphone') || cat.includes('30-min') || cat.includes('express')) categoryClass = 'iphone viral';
       else if (cat.includes('short') || cat.includes('reel') || cat.includes('ugc')) categoryClass = 'viral';
       else if (cat.includes('commercial') || cat.includes('ad')) categoryClass = 'commercial';
       else if (cat.includes('color') || cat.includes('grade')) categoryClass = 'grading';
       else if (cat.includes('wedding') || cat.includes('event')) categoryClass = 'wedding';
 
-      const bgNum = (i % 6) + 1;
+      const bgNum = (i % 8) + 1;
       const softwareTags = (c.software || []).slice(0, 3).map(s => `<span>${esc(s)}</span>`).join('');
       const nicheText = (c.niches || []).slice(0, 3).join(' · ');
       return `
