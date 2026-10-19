@@ -34,9 +34,11 @@
 .guarantee-item b{display:block;font-size:12px;font-weight:700;letter-spacing:1px;color:#fff}
 .guarantee-item small{display:block;font-size:11px;color:#9b9a84;margin-top:2px}
 
-/* Hero CTA button */
-.button-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--yellow);color:#10110b;font-weight:700;font-size:14px;border-radius:999px;text-decoration:none;box-shadow:0 4px 14px #ffd50040;transition:transform .2s,box-shadow .2s}
-.button-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px #ffd50060}
+/* Hero CTA button - High Impact Prominent Size */
+.actions{display:flex;align-items:center;margin:12px 0 6px}
+.button-cta{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:20px 48px;background:var(--yellow);color:#10110b;font-weight:800;font-size:19px;letter-spacing:0.3px;border-radius:999px;text-decoration:none;box-shadow:0 8px 30px rgba(255,213,0,0.45),0 3px 0 #8e7700;transition:all .25s cubic-bezier(0.16,1,0.3,1)}
+.button-cta:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 14px 40px rgba(255,213,0,0.65),0 4px 0 #8e7700;background:#ffe033}
+.button-cta:active{transform:translateY(0) scale(0.99);box-shadow:0 4px 16px rgba(255,213,0,0.4),0 1px 0 #8e7700}
 
 /* Venlix-style Vertical Reel Showcase */
 .reels-section{max-width:1440px;margin:60px auto;padding:0 5%}
@@ -143,6 +145,7 @@
   .header-actions{gap:8px}
   .header-actions .login-btn{padding:8px 12px;font-size:11px}
   header .small{padding:9px 12px;font-size:11px}
+  .button-cta{padding:16px 32px;font-size:16px;width:100%;text-align:center}
 }
 
 /* Creator Dashboard Assigned Projects */
