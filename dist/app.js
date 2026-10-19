@@ -166,10 +166,44 @@ if (hireModal) {
   });
 }
 
-// Reel Category Filters
+// Master Category Tabs & Sub-Filter Switcher
+document.querySelectorAll('.service-master-tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.service-master-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const group = tab.dataset.group;
+
+    document.querySelectorAll('.sub-filters').forEach(bar => {
+      bar.style.display = 'none';
+      bar.classList.remove('active');
+    });
+    const targetBar = document.querySelector(`#filters-${group}`);
+    if (targetBar) {
+      targetBar.style.display = 'flex';
+      targetBar.classList.add('active');
+      targetBar.querySelectorAll('.reel-filter').forEach(b => b.classList.remove('active'));
+      const defaultBtn = targetBar.querySelector('.reel-filter');
+      if (defaultBtn) defaultBtn.classList.add('active');
+    }
+
+    document.querySelectorAll('.reel-card').forEach(card => {
+      const cardCat = card.dataset.category || '';
+      if (group === 'all' || cardCat.split(' ').includes(group)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  };
+});
+
+// Individual Sub-Filter Buttons
 document.querySelectorAll('.reel-filter').forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll('.reel-filter').forEach(b => b.classList.remove('active'));
+    const parentBar = btn.closest('.sub-filters');
+    if (parentBar) {
+      parentBar.querySelectorAll('.reel-filter').forEach(b => b.classList.remove('active'));
+    }
     btn.classList.add('active');
     const filter = btn.dataset.filter;
     document.querySelectorAll('.reel-card').forEach(card => {
@@ -181,6 +215,15 @@ document.querySelectorAll('.reel-filter').forEach(btn => {
       }
     });
   };
+});
+
+// Quick switch to category from Services section CTAs
+document.querySelectorAll('[data-switch]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.switch;
+    const masterTab = document.querySelector(`.service-master-tab[data-group="${group}"]`);
+    if (masterTab) masterTab.click();
+  });
 });
 
 // Entry Welcome Notification & PWA Install Manager
