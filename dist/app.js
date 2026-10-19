@@ -86,7 +86,8 @@ function renderDynamicReels() {
     const approvedCardsHtml = approved.map((c, i) => {
       let cat = (c.category || 'cinematic').toLowerCase();
       let categoryClass = 'cinematic';
-      if (cat.includes('short') || cat.includes('reel') || cat.includes('ugc')) categoryClass = 'viral';
+      if (cat.includes('iphone') || cat.includes('30-min') || cat.includes('express')) categoryClass = 'iphone viral';
+      else if (cat.includes('short') || cat.includes('reel') || cat.includes('ugc')) categoryClass = 'viral';
       else if (cat.includes('commercial') || cat.includes('ad')) categoryClass = 'commercial';
       else if (cat.includes('color') || cat.includes('grade')) categoryClass = 'grading';
       else if (cat.includes('wedding') || cat.includes('event')) categoryClass = 'wedding';
@@ -170,7 +171,8 @@ document.querySelectorAll('.reel-filter').forEach(btn => {
     btn.classList.add('active');
     const filter = btn.dataset.filter;
     document.querySelectorAll('.reel-card').forEach(card => {
-      if (filter === 'all' || card.dataset.category === filter) {
+      const cardCat = card.dataset.category || '';
+      if (filter === 'all' || cardCat === filter || cardCat.split(' ').includes(filter)) {
         card.style.display = 'flex';
       } else {
         card.style.display = 'none';
