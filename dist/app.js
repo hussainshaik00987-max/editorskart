@@ -66,9 +66,49 @@ function bindReelEvents() {
     btn.onclick = e => {
       e.stopPropagation();
       const card = btn.closest('.reel-card');
-      const isPlaying = card.classList.toggle('playing');
-      btn.textContent = isPlaying ? '⏸' : '▶';
-      btn.setAttribute('aria-label', isPlaying ? 'Pause reel preview' : 'Play reel preview');
+      const video = card.querySelector('.reel-video');
+      const isCurrentlyPlaying = card.classList.contains('playing');
+
+      // Pause and reset all other reel cards
+      document.querySelectorAll('.reel-card.playing').forEach(otherCard => {
+        if (otherCard !== card) {
+          otherCard.classList.remove('playing');
+          const otherVideo = otherCard.querySelector('.reel-video');
+          if (otherVideo) {
+            otherVideo.pause();
+          }
+          const otherBtn = otherCard.querySelector('.reel-play-btn');
+          if (otherBtn) {
+            const defaultIcon = otherBtn.dataset.icon || (otherVideo ? '▶' : '🔍');
+            otherBtn.textContent = defaultIcon;
+            otherBtn.setAttribute('aria-label', otherVideo ? 'Play reel preview' : 'Inspect preview');
+          }
+        }
+      });
+
+      if (video) {
+        if (isCurrentlyPlaying) {
+          video.pause();
+          card.classList.remove('playing');
+          btn.textContent = '▶';
+          btn.setAttribute('aria-label', 'Play reel preview');
+        } else {
+          card.classList.add('playing');
+          btn.textContent = '⏸';
+          btn.setAttribute('aria-label', 'Pause reel preview');
+          const p = video.play();
+          if (p && typeof p.catch === 'function') {
+            p.catch(err => {
+              console.log('Autoplay restriction handled:', err);
+            });
+          }
+        }
+      } else {
+        // Photo or Design card: toggle spotlight showcase preview
+        const isZoomed = card.classList.toggle('playing');
+        btn.textContent = isZoomed ? '✕' : (btn.dataset.icon || '🔍');
+        btn.setAttribute('aria-label', isZoomed ? 'Close preview' : 'Inspect preview');
+      }
     };
   });
 }
@@ -94,6 +134,7 @@ function renderDynamicReels() {
       else if (cat.includes('color') || cat.includes('grade')) categoryClass = 'grading';
       else if (cat.includes('wedding') || cat.includes('event')) categoryClass = 'wedding';
 
+      const isVideo = !categoryClass.includes('graphic') && !categoryClass.includes('photo');
       const bgNum = (i % 8) + 1;
       const softwareTags = (c.software || []).slice(0, 3).map(s => `<span>${esc(s)}</span>`).join('');
       const nicheText = (c.niches || []).slice(0, 3).join(' · ');
@@ -101,6 +142,7 @@ function renderDynamicReels() {
         <article class="reel-card dynamic-approved-card" data-category="${categoryClass}">
           <div class="reel-media">
             <div class="reel-poster reel-bg-${bgNum}"></div>
+            ${isVideo ? '<video class="reel-video" src="assets/sample-reel.mp4" playsinline loop muted preload="none"></video>' : ''}
             <div class="reel-overlay"></div>
             <span class="reel-pill">⚡ ${esc(c.turnaround || 'Same-Day Edit')}</span>
             <div class="reel-meta">
@@ -108,7 +150,7 @@ function renderDynamicReels() {
               <h3>${esc(c.category)}</h3>
               <p>${esc(nicheText || c.experience + ' yrs exp · ' + c.city)}</p>
             </div>
-            <button class="reel-play-btn" aria-label="Play reel preview">▶</button>
+            <button class="reel-play-btn" aria-label="${isVideo ? 'Play reel preview' : 'Inspect preview'}" data-icon="${isVideo ? '▶' : '🔍'}">${isVideo ? '▶' : '🔍'}</button>
           </div>
           <div class="reel-footer">
             <div class="reel-tags">${softwareTags}</div>

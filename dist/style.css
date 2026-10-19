@@ -61,11 +61,18 @@
 
 /* 9:16 Vertical Reel Media */
 .reel-media{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;background:#0d0e0a;display:flex;flex-direction:column;justify-content:space-between;padding:16px}
-.reel-poster{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s ease;z-index:1}
-.reel-card:hover .reel-poster{transform:scale(1.06)}
-.reel-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.05) 40%,rgba(0,0,0,0.85) 100%);z-index:2}
+.reel-poster{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;transition:transform .6s cubic-bezier(0.16,1,0.3,1),filter .4s ease;z-index:1}
+.reel-card:hover .reel-poster{transform:scale(1.05)}
+.reel-card.playing .reel-poster{transform:scale(1.08);filter:brightness(1.08) contrast(1.05)}
 
-/* Visual placeholder background gradients with simulated video motion */
+/* HTML5 9:16 Video Player */
+.reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;transition:opacity .35s ease;z-index:2}
+.reel-card.playing .reel-video{opacity:1;pointer-events:auto}
+
+.reel-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.05) 45%,rgba(0,0,0,0.85) 100%);z-index:3;pointer-events:none;transition:opacity .3s ease}
+.reel-card.playing .reel-overlay{background:linear-gradient(180deg,rgba(0,0,0,0.2) 0%,transparent 50%,rgba(0,0,0,0.85) 100%)}
+
+/* Visual placeholder fallback background gradients */
 .reel-bg-1{background-image:radial-gradient(ellipse at center, #ffd50020, transparent), linear-gradient(135deg, #1f271b, #0c120a);background-size:cover}
 .reel-bg-2{background-image:radial-gradient(ellipse at center, #38bdf820, transparent), linear-gradient(135deg, #1b212b, #090e17);background-size:cover}
 .reel-bg-3{background-image:radial-gradient(ellipse at center, #f43f5e20, transparent), linear-gradient(135deg, #2c1a21, #130a0e);background-size:cover}
@@ -75,16 +82,15 @@
 .reel-bg-7{background-image:radial-gradient(ellipse at center, #ec489920, transparent), linear-gradient(135deg, #2b1120, #13060f);background-size:cover}
 .reel-bg-8{background-image:radial-gradient(ellipse at center, #06b6d420, transparent), linear-gradient(135deg, #0d272d, #051317);background-size:cover}
 
-.reel-pill{position:relative;z-index:3;align-self:flex-start;background:#ffd500;color:#10110b;font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:999px;text-transform:uppercase}
-.reel-meta{position:relative;z-index:3;margin-top:auto}
+.reel-pill{position:relative;z-index:4;align-self:flex-start;background:#ffd500;color:#10110b;font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:999px;text-transform:uppercase}
+.reel-meta{position:relative;z-index:4;margin-top:auto}
 .creator-badge{display:inline-block;color:#ffd500;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:6px}
 .reel-meta h3{color:#fff;font-size:18px;margin:0 0 6px;line-height:1.2}
 .reel-meta p{color:#b3b19b;font-size:11px;line-height:1.5;margin:0}
 
-.reel-play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:4;width:56px;height:56px;border-radius:50%;background:#ffffff20;backdrop-filter:blur(8px);border:1px solid #ffffff40;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,background .2s}
+.reel-play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;width:56px;height:56px;border-radius:50%;background:#ffffff20;backdrop-filter:blur(8px);border:1px solid #ffffff40;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,background .2s}
 .reel-play-btn:hover{background:#ffd500;color:#10110b;transform:translate(-50%,-50%) scale(1.1)}
 .reel-card.playing .reel-play-btn{background:#ffd500;color:#10110b}
-.reel-card.playing .reel-poster{filter:brightness(1.15) contrast(1.05)}
 
 .reel-footer{padding:16px;background:#141510;display:flex;flex-direction:column;gap:12px;border-top:1px solid #282a1d}
 .reel-tags{display:flex;flex-wrap:wrap;gap:6px}
