@@ -51,7 +51,7 @@ function signIn() {
   updateBrand();
   const title = currentMode === 'admin' ? 'Admin authentication.' : 'Sign in with your email.';
   const copy = currentMode === 'admin'
-    ? 'Enter your registered administrator email to access the application review queue.'
+    ? 'Enter your registered administrator email to access the application review queue and order management.'
     : (pendingApplication ? 'Verify the email on your application to send it for review.' : 'We will send you a one-time code. No password needed.');
 
   view.innerHTML = heading(title, copy) +
@@ -105,7 +105,37 @@ function sessionControls() {
   });
 }
 
-// STRICT PRIVACY: Creator account view NEVER exposes client leads or other creators' private contacts
+// Helper to get all approved creators from storage or DB
+async function getApprovedCreators() {
+  let approved = [];
+  try {
+    const { data: rows } = await client.database.from('sihu_applications').select(columns).eq('status', 'approved');
+    if (rows && rows.length) {
+      approved = rows.map(r => ({
+        id: r.id,
+        user_id: r.user_id,
+        name: r.profile?.name || 'Verified Creator',
+        category: r.profile?.category || 'Video Editor',
+        software: Array.isArray(r.profile?.software) ? r.profile.software : [],
+        niches: Array.isArray(r.profile?.niches) ? r.profile.niches : [],
+        experience: r.profile?.experience || '1',
+        city: r.profile?.city || 'India',
+        portfolio: r.profile?.portfolio || '',
+        instagram: r.profile?.instagram || '',
+        turnaround: (r.profile?.category === 'Reel Maker') ? '30-Min Delivery' : 'Same-Day Edit'
+      }));
+      localStorage.setItem('sihu_approved_creators', JSON.stringify(approved));
+      return approved;
+    }
+  } catch (e) {}
+
+  try {
+    approved = JSON.parse(localStorage.getItem('sihu_approved_creators') || '[]');
+  } catch {}
+  return approved;
+}
+
+// STRICT PRIVACY: Creator account view NEVER exposes client phone, email, or identity
 async function loadAccount() {
   currentMode = 'account';
   updateBrand();
@@ -123,19 +153,64 @@ async function loadAccount() {
   const { data: rows, error: queryError } = await client.database.from('sihu_applications').select(columns).eq('user_id', auth.user.id).limit(1);
   if (queryError) throw queryError;
   const application = rows?.[0];
+
   if (!application) {
     view.innerHTML = heading('Your story starts here.', 'You are signed in. Complete your creator application to request account access.') + '<button class="primary" id="start-application">Create my application →</button>';
     view.querySelector('#start-application').onclick = () => { portal.close(); document.querySelector('.apply').click(); };
   } else if (application.status === 'approved') {
-    // Protected RPC independently checks approval on every member-account request.
     const account = await rpc('sihu_member_account');
-    view.innerHTML = heading(`Welcome, ${escape(account.profile.name)}.`, 'Your application is approved. Your Sihu creator account is now active.') +
-      `<span class="status-pill approved">Account active</span><div class="summary"><div><small>Creator category</small>${escape(account.profile.category)}</div><div><small>Email</small>${escape(account.email)}</div><div><small>Software</small>${escape(account.profile.software.join(', '))}</div><div><small>Location</small>${escape(account.profile.city)}</div></div><p>Your profile is verified and active. Creator projects and booking requests coordinated by the Sihu team will appear here.</p>`;
+    
+    // Read projects assigned to this creator (strictly sanitized: NO client contact info)
+    let assignedProjects = [];
+    try {
+      const allLeads = JSON.parse(localStorage.getItem('sihu_client_leads') || '[]');
+      assignedProjects = allLeads.filter(l => (
+        l.assigned_creator_id === application.id ||
+        (l.assigned_creator_name && l.assigned_creator_name.toLowerCase() === account.profile.name.toLowerCase())
+      ));
+    } catch {}
+
+    let projectsHtml = '';
+    if (assignedProjects.length) {
+      projectsHtml = `<div class="assigned-projects-section">
+        <h3>⚡ Projects Assigned to You (${assignedProjects.length})</h3>
+        <p class="privacy-note">🔒 Escrow Protected: Sihu Team coordinates client communication and payment milestones. Direct client contacts are kept private.</p>
+        <div class="projects-list">
+          ${assignedProjects.map(p => `
+            <div class="project-card">
+              <div class="project-header">
+                <strong>${escape(p.project_type)}</strong>
+                <span class="status-pill approved">Assigned</span>
+              </div>
+              <p><strong>Requirements:</strong> ${escape(p.details || 'Standard deliverable required')}</p>
+              <div class="project-meta"><small>Assigned on: ${new Date(p.assigned_at || p.timestamp).toLocaleDateString()}</small></div>
+              <a href="https://api.whatsapp.com/send?phone=917989797016&text=${encodeURIComponent('Hi Sihu Team, I am working on project: ' + p.project_type + '. I have an update.')}" target="_blank" class="primary small-btn wa-submit-btn">Update Sihu Manager on WhatsApp ⚡</a>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+    } else {
+      projectsHtml = `<div class="assigned-projects-section">
+        <h3>⚡ Assigned Projects</h3>
+        <p>No active project orders assigned yet. When clients book you and the Sihu Admin assigns the order, it will appear here.</p>
+      </div>`;
+    }
+
+    view.innerHTML = heading(`Welcome, ${escape(account.profile.name)}.`, 'Your application is approved. Your Sihu creator profile is published and active in the showcase.') +
+      `<span class="status-pill approved">Account &amp; Showcase Active</span>
+      <div class="summary">
+        <div><small>Creator category</small>${escape(account.profile.category)}</div>
+        <div><small>Email</small>${escape(account.email)}</div>
+        <div><small>Software</small>${escape(account.profile.software.join(', '))}</div>
+        <div><small>Location</small>${escape(account.profile.city)}</div>
+      </div>
+      ${projectsHtml}`;
   } else {
     const rejected = application.status === 'rejected';
-    view.innerHTML = heading(rejected ? 'Application not approved.' : 'Your application is under review.', rejected ? 'Your account remains locked. Review the feedback below.' : 'Your application has reached our backend securely. Your account will unlock after admin approval.') +
+    view.innerHTML = heading(rejected ? 'Application not approved.' : 'Your application is under review.', rejected ? 'Your account remains locked. Review the feedback below.' : 'Your application has reached our backend securely. Your profile will be added to the showcase after admin approval.') +
       `<span class="status-pill ${application.status}">${rejected ? 'Not approved' : 'Pending review'}</span><div class="summary"><div><small>Application ID</small>${escape(application.id)}</div><div><small>Submitted</small>${new Date(application.created_at).toLocaleDateString()}</div></div>${application.review_note ? `<p><strong>Review feedback</strong><br>${escape(application.review_note)}</p>` : ''}`;
   }
+
   if (isAdmin) {
     const adminBanner = document.createElement('div');
     adminBanner.className = 'admin-switch-banner';
@@ -154,7 +229,7 @@ async function loadAdmin() {
   const isAdmin = await rpc('sihu_is_admin');
   if (!isAdmin) {
     view.innerHTML = heading('Access restricted.', `You are signed in as <strong>${escape(auth.user.email)}</strong>, but this account is not registered as an administrator.`) +
-      '<p>Only approved administrators can review creator applications and unlock accounts.</p><div class="portal-controls"><button class="primary" id="switch-admin-user">Sign in with different email</button><button class="quiet" id="back-to-member">Back to creator account</button></div>';
+      '<p>Only approved administrators can review creator applications, assign orders, and unlock accounts.</p><div class="portal-controls"><button class="primary" id="switch-admin-user">Sign in with different email</button><button class="quiet" id="back-to-member">Back to creator account</button></div>';
     view.querySelector('#switch-admin-user').onclick = async () => {
       await client.auth.signOut();
       email = '';
@@ -173,7 +248,7 @@ async function loadAdmin() {
 function adminTabsHtml() {
   return `<div class="admin-tab-nav">
     <button class="tab-btn ${adminTab === 'applications' ? 'active' : ''}" id="tab-apps">Creator Applications ✦</button>
-    <button class="tab-btn ${adminTab === 'leads' ? 'active' : ''}" id="tab-leads">Client Hire Leads ⚡</button>
+    <button class="tab-btn ${adminTab === 'leads' ? 'active' : ''}" id="tab-leads">Client Orders &amp; Assignment ⚡</button>
   </div>`;
 }
 
@@ -183,7 +258,7 @@ async function adminQueue() {
   updateBrand();
   const { data: rows, error: queryError } = await client.database.from('sihu_applications').select(columns).eq('status', queueFilter).order('created_at', { ascending: false }).order('id').range(queuePage * pageSize, (queuePage + 1) * pageSize);
   if (queryError) throw queryError;
-  view.innerHTML = heading('Application review queue.', 'Review creator submissions, verify portfolios, and approve accounts to unlock their access.') +
+  view.innerHTML = heading('Application review queue.', 'Review creator submissions, verify portfolios, and approve accounts to publish them to the showcase.') +
     adminTabsHtml() +
     `<div class="queue-header"><label>Filter applications<select id="queue-filter"><option value="pending">Pending review</option><option value="approved">Approved</option><option value="rejected">Not approved</option></select></label><div class="queue-stats"><span class="badge">Showing: ${escape(queueFilter)}</span></div></div><div id="review-list"></div><div class="portal-controls"><button class="quiet" id="queue-prev" ${queuePage === 0 ? 'disabled' : ''}>← Previous</button><span>Page ${queuePage + 1}</span><button class="quiet" id="queue-next" ${rows.length <= pageSize ? 'disabled' : ''}>Next →</button></div>`;
   
@@ -206,7 +281,7 @@ async function adminQueue() {
     if (application.status === 'pending') {
       const controls = document.createElement('div');
       controls.className = 'review-actions';
-      controls.innerHTML = '<label>Feedback / review note (optional)<textarea maxlength="1000" rows="2" placeholder="Optional notes visible to applicant..."></textarea></label><div class="portal-controls"><button class="primary approve-btn" data-decision="approved">Approve account & unlock</button><button class="quiet reject-btn" data-decision="rejected">Reject application</button></div>';
+      controls.innerHTML = '<label>Feedback / review note (optional)<textarea maxlength="1000" rows="2" placeholder="Optional notes visible to applicant..."></textarea></label><div class="portal-controls"><button class="primary approve-btn" data-decision="approved">Approve &amp; Publish to Showcase</button><button class="quiet reject-btn" data-decision="rejected">Reject application</button></div>';
       for (const button of controls.querySelectorAll('button')) button.onclick = () => run(button, async () => {
         controls.querySelectorAll('button').forEach(b => b.disabled = true);
         try {
@@ -215,6 +290,9 @@ async function adminQueue() {
             decision: button.dataset.decision,
             note: controls.querySelector('textarea').value
           });
+          // Update cache of approved creators
+          await getApprovedCreators();
+          if (window.renderShowcase) window.renderShowcase();
           await adminQueue();
         } finally {
           controls.querySelectorAll('button').forEach(b => b.disabled = false);
@@ -236,36 +314,39 @@ async function adminQueue() {
   sessionControls();
 }
 
-// ADMIN-ONLY: View incoming client booking leads with 1-click WhatsApp/Email dispatch
+// ADMIN-ONLY: View client orders and ASSIGN them to approved creator profiles
 async function adminLeadsQueue() {
   currentMode = 'admin';
   adminTab = 'leads';
   updateBrand();
   
-  // Read leads from persistent storage
+  const approvedCreators = await getApprovedCreators();
   let leads = [];
   try {
     leads = JSON.parse(localStorage.getItem('sihu_client_leads') || '[]');
   } catch {}
 
-  view.innerHTML = heading('Client hire requests.', 'Incoming booking inquiries from clients. Connect directly via WhatsApp or Email.') +
+  view.innerHTML = heading('Client orders &amp; assignment.', 'Review client booking requests and assign them to approved creator profiles.') +
     adminTabsHtml() +
-    `<div class="queue-header"><div><strong>Total inquiries:</strong> ${leads.length}</div></div><div id="leads-list"></div>`;
+    `<div class="queue-header"><div><strong>Total Orders / Leads:</strong> ${leads.length}</div></div><div id="leads-list"></div>`;
 
   view.querySelector('#tab-apps').onclick = () => run(null, adminQueue);
   view.querySelector('#tab-leads').onclick = () => run(null, adminLeadsQueue);
 
   const list = view.querySelector('#leads-list');
   if (!leads.length) {
-    list.innerHTML = `<div class="empty-queue"><p>No client booking inquiries yet. When clients tap "Hire in 1 Tap ⚡", leads will appear here.</p></div>`;
+    list.innerHTML = `<div class="empty-queue"><p>No client booking orders yet. When clients tap "Hire in 1 Tap ⚡", orders will appear here for assignment.</p></div>`;
   } else {
-    leads.slice().reverse().forEach((lead, idx) => {
+    leads.slice().reverse().forEach((lead, reverseIdx) => {
+      const realIdx = leads.length - 1 - reverseIdx;
       const card = document.createElement('article');
       card.className = 'review-card lead-card';
       const cleanPhone = String(lead.client_phone || '').replace(/[^0-9]/g, '');
-      const waMsg = encodeURIComponent(`Hi ${lead.client_name}, this is the Sihu Team regarding your request to hire ${lead.creator}. We are ready to help you coordinate your project!`);
+      const waMsg = encodeURIComponent(`Hi ${lead.client_name}, this is the Sihu Team regarding your request for ${lead.project_type}. We have verified your request and are coordinating with the creator.`);
       const waLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${waMsg}`;
-      const mailLink = `mailto:${encodeURIComponent(lead.client_email)}?subject=${encodeURIComponent('Sihu Booking Request: ' + lead.project_type)}&body=${encodeURIComponent('Hi ' + lead.client_name + ',\n\nThank you for reaching out to Sihu regarding ' + lead.project_type + ' with ' + lead.creator + '.\n\nBest regards,\nSihu Team')}`;
+      const mailLink = `mailto:${encodeURIComponent(lead.client_email)}?subject=${encodeURIComponent('Sihu Booking: ' + lead.project_type)}`;
+
+      const isAssigned = !!lead.assigned_creator_name;
 
       card.innerHTML = `
         <div class="review-header">
@@ -273,7 +354,7 @@ async function adminLeadsQueue() {
             <h3>${escape(lead.client_name)}</h3>
             <span class="sub-label">Requested: <strong>${escape(lead.creator)}</strong> · ${new Date(lead.timestamp || Date.now()).toLocaleString()}</span>
           </div>
-          <span class="status-pill approved">New Lead</span>
+          <span class="status-pill ${isAssigned ? 'approved' : 'pending'}">${isAssigned ? 'Assigned' : 'Unassigned'}</span>
         </div>
         <div class="summary">
           <div><small>Client WhatsApp</small>${escape(lead.client_phone)}</div>
@@ -281,11 +362,50 @@ async function adminLeadsQueue() {
           <div><small>Project Type</small>${escape(lead.project_type)}</div>
           <div><small>Project Notes</small>${escape(lead.details || 'No additional notes provided.')}</div>
         </div>
+        
+        <div class="assignment-panel">
+          <h4>Assign to Creator Profile:</h4>
+          ${isAssigned ? `
+            <div class="current-assignment">
+              <span class="status-pill approved">✓ Currently assigned to: <strong>${escape(lead.assigned_creator_name)}</strong></span>
+              <small>Assigned at: ${new Date(lead.assigned_at).toLocaleString()}</small>
+            </div>
+          ` : ''}
+          <div class="assign-controls">
+            <select class="creator-assign-select">
+              <option value="">-- Choose Approved Creator --</option>
+              ${approvedCreators.map(c => `
+                <option value="${c.id}" data-name="${escape(c.name)}" ${lead.assigned_creator_name === c.name || lead.creator.includes(c.name) ? 'selected' : ''}>
+                  ${escape(c.name)} (${escape(c.category)}) - ${escape(c.city)}
+                </option>
+              `).join('')}
+            </select>
+            <button class="primary assign-btn">Confirm Assignment ➔</button>
+          </div>
+        </div>
+
         <div class="lead-actions">
-          <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="primary wa-btn">Chat on WhatsApp ↗</a>
-          <a href="${mailLink}" class="quiet mail-btn">Reply via Email ✉</a>
+          <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="primary wa-btn">Chat Client on WhatsApp ↗</a>
+          <a href="${mailLink}" class="quiet mail-btn">Reply Client via Email ✉</a>
         </div>
       `;
+
+      const assignBtn = card.querySelector('.assign-btn');
+      const select = card.querySelector('.creator-assign-select');
+      assignBtn.onclick = () => {
+        const selectedOpt = select.selectedOptions[0];
+        if (!select.value || !selectedOpt) {
+          alert('Please select an approved creator to assign this order to.');
+          return;
+        }
+        leads[realIdx].assigned_creator_id = select.value;
+        leads[realIdx].assigned_creator_name = selectedOpt.dataset.name;
+        leads[realIdx].assigned_at = new Date().toISOString();
+        leads[realIdx].status = 'assigned';
+        localStorage.setItem('sihu_client_leads', JSON.stringify(leads));
+        adminLeadsQueue();
+      };
+
       list.append(card);
     });
   }
@@ -315,7 +435,11 @@ async function openAdminPortal() {
 function submitClientLead(leadData) {
   try {
     const leads = JSON.parse(localStorage.getItem('sihu_client_leads') || '[]');
-    leads.push({ ...leadData, timestamp: new Date().toISOString() });
+    leads.push({
+      ...leadData,
+      status: 'new',
+      timestamp: new Date().toISOString()
+    });
     localStorage.setItem('sihu_client_leads', JSON.stringify(leads));
   } catch (e) {
     console.error('Failed to save lead locally:', e);
@@ -326,7 +450,8 @@ window.Sihu = {
   open: () => openPortal(),
   openAdmin: () => openAdminPortal(),
   submit: profile => openPortal(structuredClone(profile)),
-  submitLead: leadData => submitClientLead(leadData)
+  submitLead: leadData => submitClientLead(leadData),
+  getApprovedCreators: () => getApprovedCreators()
 };
 
 if (new URLSearchParams(location.search).has('admin') || location.hash === '#admin') {

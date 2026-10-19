@@ -144,3 +144,28 @@
   .header-actions .login-btn{padding:8px 12px;font-size:11px}
   header .small{padding:9px 12px;font-size:11px}
 }
+
+/* Creator Dashboard Assigned Projects */
+.assigned-projects-section{margin-top:24px;padding-top:20px;border-top:1px solid #2d3021}
+.assigned-projects-section h3{font-size:16px;color:#fff;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.privacy-note{font-size:11px;color:#c7c5ae;background:#171811;border:1px solid #363925;border-left:3px solid #ffd500;padding:8px 12px;border-radius:6px;margin:0 0 16px;line-height:1.5}
+.projects-list{display:flex;flex-direction:column;gap:12px}
+.project-card{background:#161811;border:1px solid #333624;border-radius:10px;padding:16px;transition:border-color .2s}
+.project-card:hover{border-color:#ffd50050}
+.project-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.project-header strong{font-size:14px;color:#ffd500}
+.project-card p{font-size:12px;color:#d2d0b8;margin:6px 0;line-height:1.5}
+.project-meta{font-size:11px;color:#838270;margin:8px 0 12px}
+.wa-submit-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:12px;font-weight:700;background:#25d366;color:#0b2413;border-radius:999px;text-decoration:none;box-shadow:0 3px 0 #128c7e;transition:all .2s}
+.wa-submit-btn:hover{background:#2ee573;transform:translateY(-1px)}
+
+/* Admin Assignment Panel */
+.assignment-panel{background:#181a13;border:1px solid #363926;border-radius:10px;padding:14px 16px;margin:16px 0}
+.assignment-panel h4{font-size:13px;color:#fff;margin:0 0 10px;font-weight:600}
+.current-assignment{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.current-assignment small{color:#8d8c79;font-size:11px}
+.assign-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.creator-assign-select{flex:1;min-width:220px;background:#10110b;border:1px solid #3e422c;color:#fff;padding:9px 12px;border-radius:8px;font-size:13px}
+.creator-assign-select:focus{border-color:#ffd500;outline:none}
+.assign-btn{padding:9px 18px;font-size:13px;font-weight:700;border-radius:8px;background:#ffd500;color:#10110b;border:none;cursor:pointer;transition:background .2s,transform .1s}
+.assign-btn:hover{background:#ffea70;transform:translateY(-1px)}

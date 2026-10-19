@@ -37,27 +37,94 @@ let frame=108;setInterval(()=>{if(!paused){frame=(frame+1)%480;$('#timecode').te
 
 // Reels Feed & 1-Tap Hire Interaction
 const hireModal = $('#hire-modal');
-if (hireModal) {
-  $('#hire-close').onclick = () => hireModal.close();
-  document.querySelectorAll('.hire-btn').forEach(btn => {
-    btn.onclick = () => {
-      const creator = btn.dataset.creator || 'Creator Sihu #01';
-      const category = btn.dataset.category || 'Cinematic Reel Edit';
-      $('#hire-creator').value = creator;
-      const typeSelect = $('#hire-type');
-      if (typeSelect) {
-        for (let opt of typeSelect.options) {
-          if (opt.text.toLowerCase().includes(category.toLowerCase())) {
-            typeSelect.value = opt.value;
-            break;
+
+function bindReelEvents() {
+  if (hireModal) {
+    $('#hire-close').onclick = () => hireModal.close();
+    document.querySelectorAll('.hire-btn').forEach(btn => {
+      btn.onclick = () => {
+        const creator = btn.dataset.creator || 'Creator Sihu #01';
+        const category = btn.dataset.category || 'Cinematic Reel Edit';
+        $('#hire-creator').value = creator;
+        const typeSelect = $('#hire-type');
+        if (typeSelect) {
+          for (let opt of typeSelect.options) {
+            if (opt.text.toLowerCase().includes(category.toLowerCase())) {
+              typeSelect.value = opt.value;
+              break;
+            }
           }
         }
-      }
-      $('#hire-error').textContent = '';
-      hireModal.showModal();
+        $('#hire-error').textContent = '';
+        hireModal.showModal();
+      };
+    });
+  }
+
+  // Reel Play/Pause Preview
+  document.querySelectorAll('.reel-play-btn').forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const card = btn.closest('.reel-card');
+      const isPlaying = card.classList.toggle('playing');
+      btn.textContent = isPlaying ? '⏸' : '▶';
+      btn.setAttribute('aria-label', isPlaying ? 'Pause reel preview' : 'Play reel preview');
     };
   });
+}
 
+// Render approved creators dynamically into the showcase
+function renderDynamicReels() {
+  const grid = document.querySelector('#reels-grid');
+  if (!grid) return;
+  let approved = [];
+  try {
+    approved = JSON.parse(localStorage.getItem('sihu_approved_creators') || '[]');
+  } catch {}
+
+  if (approved.length) {
+    const approvedCardsHtml = approved.map((c, i) => {
+      let cat = (c.category || 'cinematic').toLowerCase();
+      let categoryClass = 'cinematic';
+      if (cat.includes('short') || cat.includes('reel') || cat.includes('ugc')) categoryClass = 'viral';
+      else if (cat.includes('commercial') || cat.includes('ad')) categoryClass = 'commercial';
+      else if (cat.includes('color') || cat.includes('grade')) categoryClass = 'grading';
+      else if (cat.includes('wedding') || cat.includes('event')) categoryClass = 'wedding';
+
+      const bgNum = (i % 6) + 1;
+      const softwareTags = (c.software || []).slice(0, 3).map(s => `<span>${esc(s)}</span>`).join('');
+      const nicheText = (c.niches || []).slice(0, 3).join(' · ');
+      return `
+        <article class="reel-card dynamic-approved-card" data-category="${categoryClass}">
+          <div class="reel-media">
+            <div class="reel-poster reel-bg-${bgNum}"></div>
+            <div class="reel-overlay"></div>
+            <span class="reel-pill">⚡ ${esc(c.turnaround || 'Same-Day Edit')}</span>
+            <div class="reel-meta">
+              <span class="creator-badge">✦ Verified Creator: ${esc(c.name)}</span>
+              <h3>${esc(c.category)}</h3>
+              <p>${esc(nicheText || c.experience + ' yrs exp · ' + c.city)}</p>
+            </div>
+            <button class="reel-play-btn" aria-label="Play reel preview">▶</button>
+          </div>
+          <div class="reel-footer">
+            <div class="reel-tags">${softwareTags}</div>
+            <button class="primary hire-btn" data-creator="${esc(c.name)} (${esc(c.category)})" data-category="${esc(c.category)}">Hire in 1 Tap ⚡</button>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('.dynamic-approved-card').forEach(el => el.remove());
+    grid.insertAdjacentHTML('afterbegin', approvedCardsHtml);
+  }
+  bindReelEvents();
+}
+
+window.renderShowcase = renderDynamicReels;
+renderDynamicReels();
+
+if (hireModal) {
   $('#hire-form').addEventListener('submit', e => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -109,17 +176,6 @@ document.querySelectorAll('.reel-filter').forEach(btn => {
         card.style.display = 'none';
       }
     });
-  };
-});
-
-// Reel Play/Pause Preview
-document.querySelectorAll('.reel-play-btn').forEach(btn => {
-  btn.onclick = e => {
-    e.stopPropagation();
-    const card = btn.closest('.reel-card');
-    const isPlaying = card.classList.toggle('playing');
-    btn.textContent = isPlaying ? '⏸' : '▶';
-    btn.setAttribute('aria-label', isPlaying ? 'Pause reel preview' : 'Play reel preview');
   };
 });
 
