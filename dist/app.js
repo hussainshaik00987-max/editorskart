@@ -38,11 +38,210 @@ let frame=108;setInterval(()=>{if(!paused){frame=(frame+1)%480;$('#timecode').te
 // Reels Feed & 1-Tap Hire Interaction
 const hireModal = $('#hire-modal');
 
+// Reel Popup Lightbox Elements
+const reelModal = $('#reel-modal');
+const modalVideo = $('#reel-modal-video');
+const modalImg = $('#reel-modal-img');
+const modalClose = $('#reel-modal-close');
+const modalMute = $('#reel-modal-mute');
+const modalPill = $('#reel-modal-pill');
+const modalBadge = $('#reel-modal-creator-badge');
+const modalTitle = $('#reel-modal-title');
+const modalDesc = $('#reel-modal-desc');
+const modalTags = $('#reel-modal-tags');
+const modalHireBtn = $('#reel-modal-hire-btn');
+const modalProgressFill = $('#reel-modal-progress-fill');
+const modalProgressBar = $('#reel-modal-progress-bar');
+const tapPulse = $('#reel-modal-tap-pulse');
+
+function showTapPulse(symbol) {
+  if (!tapPulse) return;
+  tapPulse.textContent = symbol;
+  tapPulse.classList.add('show');
+  setTimeout(() => tapPulse.classList.remove('show'), 400);
+}
+
+function closeReelModal() {
+  if (!reelModal || !reelModal.open) return;
+  if (modalVideo) {
+    modalVideo.pause();
+    modalVideo.removeAttribute('src');
+    modalVideo.load();
+  }
+  reelModal.close();
+}
+
+function openReelModal(card) {
+  if (!reelModal || !card) return;
+  const videoEl = card.querySelector('.reel-video');
+  const posterEl = card.querySelector('.reel-poster');
+  const hireBtn = card.querySelector('.hire-btn');
+  const pillEl = card.querySelector('.reel-pill');
+  const badgeEl = card.querySelector('.creator-badge');
+  const titleEl = card.querySelector('h3');
+  const descEl = card.querySelector('p');
+  const tagsEl = card.querySelector('.reel-tags');
+
+  const creator = hireBtn?.dataset.creator || 'Verified Creator';
+  const category = hireBtn?.dataset.category || 'Video Editing';
+  const title = titleEl ? titleEl.textContent : '';
+  const desc = descEl ? descEl.textContent : '';
+  const pill = pillEl ? pillEl.textContent : '⚡ Instant Hire';
+  const badge = badgeEl ? badgeEl.textContent : '✦ Verified Creator';
+  const tagsHtml = tagsEl ? tagsEl.innerHTML : '';
+
+  if (modalPill) modalPill.textContent = pill;
+  if (modalBadge) modalBadge.textContent = badge;
+  if (modalTitle) modalTitle.textContent = title;
+  if (modalDesc) modalDesc.textContent = desc;
+  if (modalTags) modalTags.innerHTML = tagsHtml;
+  if (modalHireBtn) {
+    modalHireBtn.dataset.creator = creator;
+    modalHireBtn.dataset.category = category;
+  }
+
+  if (videoEl) {
+    if (modalVideo) {
+      modalVideo.style.display = 'block';
+      modalVideo.src = videoEl.getAttribute('src') || 'assets/sample-reel.mp4';
+      modalVideo.currentTime = 0;
+      modalVideo.muted = false;
+    }
+    if (modalImg) modalImg.style.display = 'none';
+    if (modalMute) {
+      modalMute.style.display = 'flex';
+      modalMute.textContent = '🔊';
+      modalMute.setAttribute('aria-label', 'Mute audio');
+    }
+    if (modalProgressBar) modalProgressBar.style.display = 'block';
+
+    reelModal.showModal();
+
+    if (modalVideo) {
+      const playPromise = modalVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If browser policy requires mute for initial autoplay
+          modalVideo.muted = true;
+          if (modalMute) {
+            modalMute.textContent = '🔇';
+            modalMute.setAttribute('aria-label', 'Unmute audio');
+          }
+          modalVideo.play().catch(err => console.log('Autoplay handled:', err));
+        });
+      }
+    }
+  } else {
+    if (modalVideo) {
+      modalVideo.pause();
+      modalVideo.style.display = 'none';
+    }
+    if (modalImg) {
+      modalImg.style.display = 'block';
+      let bgUrl = '';
+      if (posterEl) {
+        const styleBg = posterEl.style.backgroundImage || '';
+        const match = styleBg.match(/url\(['"]?(.*?)['"]?\)/);
+        if (match) bgUrl = match[1];
+      }
+      modalImg.src = bgUrl || 'assets/reel-7-thumbnail.jpg';
+    }
+    if (modalMute) modalMute.style.display = 'none';
+    if (modalProgressBar) modalProgressBar.style.display = 'none';
+
+    reelModal.showModal();
+  }
+}
+
+// Global modal event listeners
+if (reelModal) {
+  if (modalClose) modalClose.onclick = closeReelModal;
+  reelModal.addEventListener('cancel', closeReelModal);
+
+  // Close when tapping outside dialog
+  reelModal.onclick = e => {
+    const rect = reelModal.getBoundingClientRect();
+    const isInDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height
+      && rect.left <= e.clientX && e.clientX <= rect.left + rect.width);
+    if (!isInDialog) closeReelModal();
+  };
+
+  // Tap video to toggle play/pause
+  if (modalVideo) {
+    modalVideo.onclick = e => {
+      e.stopPropagation();
+      if (modalVideo.paused) {
+        modalVideo.play();
+        showTapPulse('▶');
+      } else {
+        modalVideo.pause();
+        showTapPulse('⏸');
+      }
+    };
+
+    modalVideo.ontimeupdate = () => {
+      if (modalVideo.duration && modalProgressFill) {
+        const pct = (modalVideo.currentTime / modalVideo.duration) * 100;
+        modalProgressFill.style.width = pct + '%';
+      }
+    };
+  }
+
+  // Seek bar click
+  if (modalProgressBar) {
+    modalProgressBar.onclick = e => {
+      e.stopPropagation();
+      const rect = modalProgressBar.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      if (modalVideo && modalVideo.duration) {
+        modalVideo.currentTime = pos * modalVideo.duration;
+      }
+    };
+  }
+
+  // Audio mute/unmute toggle
+  if (modalMute) {
+    modalMute.onclick = e => {
+      e.stopPropagation();
+      if (!modalVideo) return;
+      modalVideo.muted = !modalVideo.muted;
+      modalMute.textContent = modalVideo.muted ? '🔇' : '🔊';
+      modalMute.setAttribute('aria-label', modalVideo.muted ? 'Unmute audio' : 'Mute audio');
+    };
+  }
+
+  // 1-Tap Hire directly from Popup Lightbox
+  if (modalHireBtn) {
+    modalHireBtn.onclick = e => {
+      e.stopPropagation();
+      const creator = modalHireBtn.dataset.creator || 'Verified Creator';
+      const category = modalHireBtn.dataset.category || 'Video Editing';
+      closeReelModal();
+
+      if (hireModal) {
+        $('#hire-creator').value = creator;
+        const typeSelect = $('#hire-type');
+        if (typeSelect) {
+          for (let opt of typeSelect.options) {
+            if (opt.text.toLowerCase().includes(category.toLowerCase())) {
+              typeSelect.value = opt.value;
+              break;
+            }
+          }
+        }
+        $('#hire-error').textContent = '';
+        hireModal.showModal();
+      }
+    };
+  }
+}
+
 function bindReelEvents() {
   if (hireModal) {
     $('#hire-close').onclick = () => hireModal.close();
     document.querySelectorAll('.hire-btn').forEach(btn => {
-      btn.onclick = () => {
+      btn.onclick = e => {
+        e.stopPropagation();
         const creator = btn.dataset.creator || 'Creator Sihu #01';
         const category = btn.dataset.category || 'Cinematic Reel Edit';
         $('#hire-creator').value = creator;
@@ -61,54 +260,19 @@ function bindReelEvents() {
     });
   }
 
-  // Reel Play/Pause Preview
+  // When client taps on video/image media card or play button, popup & play!
+  document.querySelectorAll('.reel-media').forEach(media => {
+    media.onclick = e => {
+      const card = media.closest('.reel-card');
+      if (card) openReelModal(card);
+    };
+  });
+
   document.querySelectorAll('.reel-play-btn').forEach(btn => {
     btn.onclick = e => {
       e.stopPropagation();
       const card = btn.closest('.reel-card');
-      const video = card.querySelector('.reel-video');
-      const isCurrentlyPlaying = card.classList.contains('playing');
-
-      // Pause and reset all other reel cards
-      document.querySelectorAll('.reel-card.playing').forEach(otherCard => {
-        if (otherCard !== card) {
-          otherCard.classList.remove('playing');
-          const otherVideo = otherCard.querySelector('.reel-video');
-          if (otherVideo) {
-            otherVideo.pause();
-          }
-          const otherBtn = otherCard.querySelector('.reel-play-btn');
-          if (otherBtn) {
-            const defaultIcon = otherBtn.dataset.icon || (otherVideo ? '▶' : '🔍');
-            otherBtn.textContent = defaultIcon;
-            otherBtn.setAttribute('aria-label', otherVideo ? 'Play reel preview' : 'Inspect preview');
-          }
-        }
-      });
-
-      if (video) {
-        if (isCurrentlyPlaying) {
-          video.pause();
-          card.classList.remove('playing');
-          btn.textContent = '▶';
-          btn.setAttribute('aria-label', 'Play reel preview');
-        } else {
-          card.classList.add('playing');
-          btn.textContent = '⏸';
-          btn.setAttribute('aria-label', 'Pause reel preview');
-          const p = video.play();
-          if (p && typeof p.catch === 'function') {
-            p.catch(err => {
-              console.log('Autoplay restriction handled:', err);
-            });
-          }
-        }
-      } else {
-        // Photo or Design card: toggle spotlight showcase preview
-        const isZoomed = card.classList.toggle('playing');
-        btn.textContent = isZoomed ? '✕' : (btn.dataset.icon || '🔍');
-        btn.setAttribute('aria-label', isZoomed ? 'Close preview' : 'Inspect preview');
-      }
+      if (card) openReelModal(card);
     };
   });
 }

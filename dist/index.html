@@ -504,6 +504,42 @@
   </div>
 </div></main>
 
+<dialog id="reel-modal" class="reel-modal">
+  <div class="reel-modal-container">
+    <div class="reel-modal-media" id="reel-modal-media">
+      <video id="reel-modal-video" class="reel-modal-video" playsinline loop preload="auto"></video>
+      <img id="reel-modal-img" class="reel-modal-img" alt="Showcase Preview">
+      <div class="reel-modal-tap-pulse" id="reel-modal-tap-pulse">▶</div>
+      <div class="reel-modal-vignette"></div>
+
+      <div class="reel-modal-top">
+        <span class="reel-modal-pill" id="reel-modal-pill">⚡ 30-Min Delivery</span>
+        <div class="reel-modal-top-actions">
+          <button type="button" id="reel-modal-mute" class="reel-modal-btn" aria-label="Toggle sound" title="Toggle sound">🔊</button>
+          <button type="button" id="reel-modal-close" class="reel-modal-btn close-btn" aria-label="Close preview" title="Close">✕</button>
+        </div>
+      </div>
+
+      <div class="reel-modal-progress-bar" id="reel-modal-progress-bar" title="Seek video">
+        <div class="reel-modal-progress-fill" id="reel-modal-progress-fill"></div>
+      </div>
+
+      <div class="reel-modal-bottom">
+        <div class="reel-modal-meta">
+          <span class="creator-badge" id="reel-modal-creator-badge">✦ Verified Creator</span>
+          <h3 id="reel-modal-title">Showcase Title</h3>
+          <p id="reel-modal-desc">Description</p>
+          <div class="reel-modal-tags" id="reel-modal-tags"></div>
+        </div>
+
+        <button type="button" class="primary reel-modal-hire-btn" id="reel-modal-hire-btn">
+          Hire in 1 Tap ⚡
+        </button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <dialog id="hire-modal"><div class="modal-top"><a class="brand" href="#">✦ <b>sihu<span>hire</span></b></a><button id="hire-close" class="quiet" aria-label="Close booking">✕</button></div>
 <div class="portal-content">
   <div class="eyebrow">FAST 1-TAP HIRE</div>
