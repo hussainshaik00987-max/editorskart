@@ -28,11 +28,11 @@
 .portfolio-btn:hover{background:#26291e;border-color:var(--yellow)}
 
 /* Snapja-style Guarantee & Trust Strip */
-.guarantee-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1440px;margin:30px auto;padding:22px 5%;background:linear-gradient(135deg,#1c1e15,#10110b);border:1px solid #333624;border-radius:16px}
-.guarantee-item{display:flex;align-items:center;gap:14px}
-.guarantee-item>span{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#ffd5001a;color:var(--yellow);font-size:18px;flex-shrink:0}
-.guarantee-item b{display:block;font-size:12px;font-weight:700;letter-spacing:1px;color:#fff}
-.guarantee-item small{display:block;font-size:11px;color:#9b9a84;margin-top:2px}
+.guarantee-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1440px;margin:32px auto;padding:26px 5%;background:linear-gradient(135deg,#1c1e15,#10110b);border:1px solid #333624;border-radius:18px}
+.guarantee-item{display:flex;align-items:center;gap:18px}
+.guarantee-item>span{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:#ffd5001a;color:var(--yellow);font-size:24px;flex-shrink:0;box-shadow:0 0 20px #ffd50015;border:1px solid #ffd50030}
+.guarantee-item b{display:block;font-size:16px;font-weight:800;letter-spacing:0.5px;color:#fff;margin-bottom:4px}
+.guarantee-item small{display:block;font-size:13px;color:#b5b49e;line-height:1.4}
 
 /* Hero CTA button - High Impact Prominent Size */
 .actions{display:flex;align-items:center;margin:12px 0 6px}
