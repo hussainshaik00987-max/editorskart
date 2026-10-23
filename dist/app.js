@@ -478,3 +478,608 @@ window.addEventListener('beforeinstallprompt', e => {
     };
   }
 });
+
+// =======================================================
+// SIHU EXPERT MARKETPLACE ENGINE (Screens 1, 2, 3)
+// =======================================================
+
+const SIHU_TEAM = [
+  {
+    id: 'hussain',
+    name: 'Hussain',
+    initial: 'H',
+    role: 'Long Videos & YouTube Specialist',
+    category: 'video',
+    categories: ['all', 'youtube', 'reels'],
+    tag: 'Video Editing',
+    badge: 'Creator Specialist',
+    startingPrice: 600,
+    priceDisplay: 'From ₹600',
+    rating: '★ 4.9 (52 orders)',
+    delivery: '2 - 4 Days',
+    bio: 'Specialist in creator-first high retention editing. Long videos for creators, YouTube pacing, podcast multi-cam, sound design, and viral short-form retention.',
+    packages: [
+      {
+        name: 'Standard Reel Edit',
+        time: '2 days delivery',
+        revisions: '2 revisions',
+        price: 800,
+        desc: 'Dynamic hook, fast pacing, animated captions, color correction & sound effects.',
+        features: ['9:16 Vertical Cut', 'Dynamic Subtitles', 'Sound SFX Design', '1080p / 4K Export']
+      },
+      {
+        name: 'YouTube Video (8 to 10 min)',
+        time: '4 days delivery',
+        revisions: '2 revisions',
+        price: 2000,
+        desc: 'Full retention YouTube editing with B-roll overlays, zooms, chapter pacing & audio mastering.',
+        features: ['16:9 4K Cut', 'Audio Enhancement', 'B-Roll & Graphics', 'High-CTR Pacing']
+      },
+      {
+        name: 'Creator Long-Form Master',
+        time: '5 days delivery',
+        revisions: '3 revisions',
+        price: 3000,
+        desc: 'End-to-end long-form cut + 2 promotional viral shorts extracted from the video.',
+        features: ['Complete Long Cut', '2 Free Promo Shorts', 'Soundtrack Mixing', 'Thumbnail Guidance']
+      }
+    ]
+  },
+  {
+    id: 'phani',
+    name: 'Phani',
+    initial: 'P',
+    role: 'Expert Editor & AI Content Reels',
+    category: 'ai-reels',
+    categories: ['all', 'ai-reels', 'reels', 'youtube'],
+    tag: 'AI Reels & Expert Cut',
+    badge: 'Top Rated Expert',
+    startingPrice: 1000,
+    priceDisplay: 'From ₹1,000',
+    rating: '★ 5.0 (64 orders)',
+    delivery: '2 Days',
+    bio: 'Expert across all editing styles. Hyper-engaging AI content reels, avatar workflows, script-to-video, 3D motion graphics, and viral short-form systems.',
+    packages: [
+      {
+        name: 'AI Reel (30 to 60 sec)',
+        time: '2 days delivery',
+        revisions: '2 revisions',
+        price: 1000,
+        desc: 'Cutting-edge AI visuals, synthetic voiceover sync, animated text & retention graphics.',
+        features: ['AI Visual Generation', 'Voiceover Sync', 'Kinetic Typography', 'High-Viral Hook']
+      },
+      {
+        name: 'Standard Reel Edit',
+        time: '2 days delivery',
+        revisions: '2 revisions',
+        price: 800,
+        desc: 'Cinematic color, sound design, sound synchrony, and high-energy transitions.',
+        features: ['Pacing & Transitions', 'Color Grading', 'Trendy SFX', 'Instagram/YT Shorts Ready']
+      },
+      {
+        name: 'YouTube Video (8 to 10 min)',
+        time: '4 days delivery',
+        revisions: '2 revisions',
+        price: 2500,
+        desc: 'Expert YouTube edit with custom motion elements, documentary/talking-head rhythm.',
+        features: ['Multi-Cam Switching', 'Documentary Style B-roll', 'Custom Motion Graphics', 'Audio Polish']
+      }
+    ]
+  },
+  {
+    id: 'sandeep',
+    name: 'Sandeep',
+    initial: 'S',
+    role: 'Basic AI Videos & Graphic Design',
+    category: 'design',
+    categories: ['all', 'ai-reels', 'design', 'budget'],
+    tag: 'AI Reels & Design',
+    badge: 'Fast Turnaround',
+    startingPrice: 200,
+    priceDisplay: 'From ₹200',
+    rating: '★ 4.8 (38 orders)',
+    delivery: 'Same-Day - 2 Days',
+    bio: 'Quick, reliable basic AI video editing for small videos, YouTube thumbnails, social media banners, and carousel graphics.',
+    packages: [
+      {
+        name: 'Social Media Poster / Banner',
+        time: '1 day delivery',
+        revisions: '2 revisions',
+        price: 300,
+        desc: 'Clean, high-impact social media creative for Instagram, Facebook, or business promotion.',
+        features: ['High-Res PNG/JPG', 'Brand Colors Match', 'Source Files', 'Fast Same-Day Turnaround']
+      },
+      {
+        name: 'AI Reel (Small / Quick)',
+        time: '2 days delivery',
+        revisions: '1 revision',
+        price: 500,
+        desc: 'Compact AI short with automated text, voiceover, and clean image-to-video motion.',
+        features: ['15-30 Sec Clip', 'Auto Subtitles', 'Background Music', 'Commercial Use']
+      },
+      {
+        name: 'Creative Ad Creative Pack',
+        time: '2 days delivery',
+        revisions: '2 revisions',
+        price: 800,
+        desc: 'Pack of 3 converting social creatives for product campaigns or event ads.',
+        features: ['3 Size Variants', 'Feed & Story Format', 'High Converting Copy Style', 'Quick Delivery']
+      }
+    ]
+  },
+  {
+    id: 'prudvi',
+    name: 'Prudvi',
+    initial: 'P',
+    role: 'Budget Video Editing',
+    category: 'budget',
+    categories: ['all', 'budget', 'reels'],
+    tag: 'Budget Video Editing',
+    badge: 'Budget Friendly',
+    startingPrice: 300,
+    priceDisplay: 'From ₹300',
+    rating: '★ 4.8 (41 orders)',
+    delivery: '1 - 2 Days',
+    bio: 'Affordable, clean video editing for students, budget creators, simple vlog cuts, basic Instagram reels, and status clips.',
+    packages: [
+      {
+        name: 'Basic Reel Edit',
+        time: '1 day delivery',
+        revisions: '1 revision',
+        price: 300,
+        desc: 'Clean cutting, basic text overlays, music sync, and clean mobile export.',
+        features: ['Under 60 Seconds', 'Music Sync', 'Trim & Clean Cuts', 'Fast 24h Delivery']
+      },
+      {
+        name: 'Simple Shorts Cut',
+        time: '1 day delivery',
+        revisions: '2 revisions',
+        price: 450,
+        desc: 'Shorts cut with basic sound effects, subtitle highlights, and aspect ratio conversion.',
+        features: ['Clean Subtitles', 'Basic SFX', 'Color Boost', 'Fast Turnaround']
+      },
+      {
+        name: 'Standard Budget Video Edit',
+        time: '2 days delivery',
+        revisions: '2 revisions',
+        price: 500,
+        desc: 'Up to 3-5 minute basic YouTube or vlog edit with title cards and audio cleanup.',
+        features: ['Up to 5 Minutes', 'Basic Lower Thirds', 'Audio Leveling', '1080p Export']
+      }
+    ]
+  },
+  {
+    id: 'sai',
+    name: 'Sai',
+    initial: 'S',
+    role: 'Logos & Posters Designer',
+    category: 'design',
+    categories: ['all', 'design', 'budget'],
+    tag: 'Graphic Design',
+    badge: 'Brand Identity',
+    startingPrice: 200,
+    priceDisplay: 'From ₹200',
+    rating: '★ 4.9 (45 orders)',
+    delivery: '1 - 3 Days',
+    bio: 'Professional logo designer and graphic artist. Business logos, cinematic posters, movie posters, business cards, and vector branding.',
+    packages: [
+      {
+        name: 'Promotional / Event Poster',
+        time: '1 day delivery',
+        revisions: '2 revisions',
+        price: 300,
+        desc: 'Cinematic or commercial poster for events, business promotions, or releases.',
+        features: ['High-Res Print Ready', 'Social Media Sizing', 'Modern Typography', 'Quick Delivery']
+      },
+      {
+        name: 'Business Logo Design',
+        time: '2 days delivery',
+        revisions: '3 revisions',
+        price: 800,
+        desc: '2 unique vector logo concepts, transparent PNGs, brand icon, and color palette.',
+        features: ['2 Logo Concepts', 'Vector SVG/PNG/PDF', 'Transparent Files', 'Social Media Avatar']
+      },
+      {
+        name: 'Premium Brand Identity Pack',
+        time: '3 days delivery',
+        revisions: 'Unlimited',
+        price: 1500,
+        desc: 'Full logo suite + business card + social banners + vector source files (.AI/.EPS).',
+        features: ['Full Vector Source Files', 'Business Card Design', 'Social Media Kit', 'Unlimited Revisions']
+      }
+    ]
+  }
+];
+
+// Screen 1: Render Experts Grid
+function renderMarketplaceExperts(activeFilter = 'all', searchQuery = '') {
+  const grid = document.querySelector('#experts-grid');
+  if (!grid) return;
+
+  const q = (searchQuery || '').trim().toLowerCase();
+  const filtered = SIHU_TEAM.filter(expert => {
+    const matchesFilter = activeFilter === 'all' || expert.categories.includes(activeFilter);
+    const matchesQuery = !q || (
+      expert.name.toLowerCase().includes(q) ||
+      expert.role.toLowerCase().includes(q) ||
+      expert.tag.toLowerCase().includes(q) ||
+      expert.bio.toLowerCase().includes(q) ||
+      expert.packages.some(p => p.name.toLowerCase().includes(q))
+    );
+    return matchesFilter && matchesQuery;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; background: #14160f; border-radius: 16px; border: 1px dashed #343725;">
+        <span style="font-size: 32px; display: block; margin-bottom: 10px;">🔍</span>
+        <h3 style="color: #fff; margin: 0 0 6px;">No experts found for "${esc(searchQuery)}"</h3>
+        <p style="color: #989680; font-size: 13px; margin: 0 0 16px;">Try searching for reels, youtube, AI, logo, or clear filters.</p>
+        <button class="primary small" id="reset-experts-btn">Show All Experts</button>
+      </div>
+    `;
+    const resetBtn = grid.querySelector('#reset-experts-btn');
+    if (resetBtn) {
+      resetBtn.onclick = () => {
+        const inp = document.querySelector('#expert-search-input');
+        if (inp) inp.value = '';
+        const clr = document.querySelector('#search-clear-btn');
+        if (clr) clr.style.display = 'none';
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
+        renderMarketplaceExperts('all', '');
+      };
+    }
+    return;
+  }
+
+  grid.innerHTML = filtered.map(expert => `
+    <article class="expert-card" data-expert-id="${expert.id}">
+      <div>
+        <div class="expert-card-header">
+          <div class="expert-avatar-circle">${expert.initial}</div>
+          <div class="expert-card-meta">
+            <h3>${esc(expert.name)} <span class="verified-tag">✦ Verified</span></h3>
+            <p class="expert-role">${esc(expert.role)}</p>
+          </div>
+        </div>
+
+        <div class="expert-badges-row">
+          <span class="expert-pill speed">⚡ ${esc(expert.delivery)}</span>
+          <span class="expert-pill rating">${esc(expert.rating)}</span>
+          <span class="expert-pill">${esc(expert.tag)}</span>
+        </div>
+
+        <p class="expert-bio-snippet">${esc(expert.bio)}</p>
+      </div>
+
+      <div class="expert-card-footer">
+        <div class="expert-price-box">
+          <small>Starting from</small>
+          <strong>${esc(expert.priceDisplay)}</strong>
+        </div>
+        <button type="button" class="view-packages-btn" data-expert-id="${expert.id}">View Packages ↗</button>
+      </div>
+    </article>
+  `).join('');
+
+  // Attach click listeners to cards
+  grid.querySelectorAll('.expert-card').forEach(card => {
+    card.onclick = () => {
+      const id = card.dataset.expertId;
+      openExpertProfile(id);
+    };
+  });
+}
+
+// Search & Filter event handlers
+const searchInput = document.querySelector('#expert-search-input');
+const searchClearBtn = document.querySelector('#search-clear-btn');
+let currentFilter = 'all';
+
+if (searchInput) {
+  searchInput.addEventListener('input', e => {
+    const val = e.target.value;
+    if (searchClearBtn) searchClearBtn.style.display = val ? 'inline-block' : 'none';
+    renderMarketplaceExperts(currentFilter, val);
+  });
+}
+
+if (searchClearBtn) {
+  searchClearBtn.onclick = () => {
+    if (searchInput) searchInput.value = '';
+    searchClearBtn.style.display = 'none';
+    renderMarketplaceExperts(currentFilter, '');
+  };
+}
+
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.onclick = () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter || 'all';
+    renderMarketplaceExperts(currentFilter, searchInput ? searchInput.value : '');
+  };
+});
+
+// Screen 2: Open Editor Profile Modal
+const profileModal = document.querySelector('#expert-profile-modal');
+const profileCloseBtn = document.querySelector('#expert-profile-close');
+
+if (profileCloseBtn && profileModal) {
+  profileCloseBtn.onclick = () => profileModal.close();
+}
+
+function openExpertProfile(expertId) {
+  const expert = SIHU_TEAM.find(e => e.id === expertId);
+  if (!expert || !profileModal) return;
+
+  $('#profile-modal-avatar').textContent = expert.initial;
+  $('#profile-modal-name').textContent = expert.name;
+  $('#profile-modal-role').textContent = expert.role;
+  $('#profile-modal-delivery').textContent = `⚡ ${expert.delivery} Delivery`;
+  $('#profile-modal-rating').textContent = expert.rating;
+  $('#profile-modal-badge').textContent = `✦ ${expert.badge}`;
+  $('#profile-modal-bio').textContent = expert.bio;
+
+  const packagesGrid = $('#profile-packages-grid');
+  packagesGrid.innerHTML = expert.packages.map((pkg, idx) => `
+    <div class="package-card">
+      <div class="package-card-header">
+        <h4>${esc(pkg.name)}</h4>
+        <span class="package-timing">⚡ ${esc(pkg.time)} · ${esc(pkg.revisions)}</span>
+        <div class="package-price">₹${pkg.price.toLocaleString()}</div>
+        <p class="package-desc">${esc(pkg.desc)}</p>
+        <ul class="package-features">
+          ${pkg.features.map(f => `<li>${esc(f)}</li>`).join('')}
+        </ul>
+      </div>
+      <button type="button" class="primary package-order-btn" data-expert-id="${expert.id}" data-pkg-idx="${idx}">
+        Order this package ⚡
+      </button>
+    </div>
+  `).join('');
+
+  // Wire up "Order this package"
+  packagesGrid.querySelectorAll('.package-order-btn').forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const expId = btn.dataset.expertId;
+      const pkgIdx = parseInt(btn.dataset.pkgIdx, 10);
+      profileModal.close();
+      openOrderCheckout(expId, pkgIdx);
+    };
+  });
+
+  profileModal.showModal();
+}
+
+// Screen 3: Order Checkout & Live Tracker
+const orderModal = document.querySelector('#order-status-modal');
+const orderModalClose = document.querySelector('#order-modal-close');
+const orderCheckoutView = document.querySelector('#order-checkout-view');
+const orderTrackerView = document.querySelector('#order-tracker-view');
+const orderForm = document.querySelector('#order-checkout-form');
+const copyUpiBtn = document.querySelector('#copy-upi-btn');
+
+if (orderModalClose && orderModal) {
+  orderModalClose.onclick = () => orderModal.close();
+}
+
+if (copyUpiBtn) {
+  copyUpiBtn.onclick = () => {
+    navigator.clipboard.writeText('7989797016@ybl').then(() => {
+      copyUpiBtn.textContent = 'Copied! ✓';
+      setTimeout(() => copyUpiBtn.textContent = 'Copy', 2000);
+    }).catch(() => {});
+  };
+}
+
+function openOrderCheckout(expertId, pkgIndex) {
+  const expert = SIHU_TEAM.find(e => e.id === expertId);
+  if (!expert || !orderModal) return;
+  const pkg = expert.packages[pkgIndex];
+  if (!pkg) return;
+
+  $('#order-checkout-view').style.display = 'block';
+  $('#order-tracker-view').style.display = 'none';
+
+  $('#checkout-package-name').textContent = pkg.name;
+  $('#checkout-expert-name').textContent = `${expert.name} (${expert.tag})`;
+  $('#checkout-delivery-time').textContent = `${pkg.time} · ${pkg.revisions}`;
+  $('#checkout-total-price').textContent = `₹${pkg.price.toLocaleString()}`;
+
+  $('#order-expert-id').value = expert.id;
+  $('#order-package-title').value = pkg.name;
+  $('#order-package-price').value = pkg.price;
+  $('#checkout-error').textContent = '';
+
+  orderModal.showModal();
+}
+
+if (orderForm) {
+  orderForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const fd = new FormData(orderForm);
+    const clientName = fd.get('client_name')?.trim();
+    const clientPhone = fd.get('client_phone')?.trim();
+    const clientEmail = fd.get('client_email')?.trim();
+    const brief = fd.get('project_brief')?.trim();
+    const expertId = fd.get('expert_id');
+    const packageName = fd.get('package_name');
+    const packagePrice = fd.get('package_price');
+
+    if (!clientName || !clientPhone || !clientEmail || !brief) {
+      $('#checkout-error').textContent = 'Please fill out all required fields.';
+      return;
+    }
+
+    const expert = SIHU_TEAM.find(e => e.id === expertId) || SIHU_TEAM[0];
+    const orderId = 'SIHU-ORD-' + Math.floor(1000 + Math.random() * 9000);
+    const orderData = {
+      orderId,
+      clientName,
+      clientPhone,
+      clientEmail,
+      brief,
+      expertId: expert.id,
+      expertName: expert.name,
+      packageName,
+      packagePrice: parseInt(packagePrice, 10),
+      delivery: expert.delivery,
+      status: 'advance_payment',
+      createdAt: new Date().toISOString()
+    };
+
+    // Save in LocalStorage
+    try {
+      localStorage.setItem('sihu_active_order', JSON.stringify(orderData));
+      const allOrders = JSON.parse(localStorage.getItem('sihu_all_orders') || '[]');
+      allOrders.unshift(orderData);
+      localStorage.setItem('sihu_all_orders', JSON.stringify(allOrders));
+    } catch {}
+
+    // Dispatch lead to InsForge backend if available
+    if (window.Sihu?.submitLead) {
+      window.Sihu.submitLead({
+        client_name: clientName,
+        client_phone: clientPhone,
+        client_email: clientEmail,
+        creator: `${expert.name} [${orderId}]`,
+        project_type: packageName,
+        details: `[ORDER: ₹${packagePrice}] ${brief}`
+      });
+    }
+
+    // Prepare WhatsApp URL for Advance Payment confirmation
+    const waText = `Hi Sihu Team! I placed Order *#${orderId}* on SIHU.\n\n*Expert:* ${expert.name}\n*Package:* ${packageName}\n*Total:* ₹${packagePrice}\n*Client Name:* ${clientName}\n*Phone:* ${clientPhone}\n*Brief:* ${brief}\n\nI am sending the advance payment via UPI to 7989797016@ybl. Please confirm my order!`;
+    const waUrl = `https://api.whatsapp.com/send?phone=917989797016&text=${encodeURIComponent(waText)}`;
+
+    // Render Live Progress Tracker (Screen 3)
+    renderOrderTracker(orderData, waUrl);
+
+    // Open WhatsApp
+    window.open(waUrl, '_blank');
+  });
+}
+
+function renderOrderTracker(order, customWaUrl = null) {
+  $('#order-checkout-view').style.display = 'none';
+  $('#order-tracker-view').style.display = 'block';
+
+  $('#tracker-order-id').textContent = '#' + (order.orderId || 'SIHU-ORD-8491');
+  $('#tracker-package-title').textContent = order.packageName || 'Standard Reel Edit';
+  $('#tracker-expert-name').textContent = order.expertName || 'Assigned Expert';
+  $('#tracker-delivery').textContent = order.delivery || '2 Days';
+  $('#tracker-price').textContent = '₹' + (order.packagePrice || 800).toLocaleString();
+
+  const waUrl = customWaUrl || `https://api.whatsapp.com/send?phone=917989797016&text=${encodeURIComponent('Hi Sihu Team! Checking status for Order #' + order.orderId + ' (' + order.expertName + ' - ' + order.packageName + ')')}`;
+  $('#tracker-wa-btn').setAttribute('href', waUrl);
+
+  const conn1 = $('#conn-1');
+  const conn2 = $('#conn-2');
+  const conn3 = $('#conn-3');
+  const step2 = $('#step-2');
+  const step3 = $('#step-3');
+  const step4 = $('#step-4');
+
+  // Reset steps
+  step2.className = 'timeline-step';
+  step3.className = 'timeline-step';
+  step4.className = 'timeline-step';
+  conn1.className = 'timeline-connector';
+  conn2.className = 'timeline-connector';
+  conn3.className = 'timeline-connector';
+
+  if (order.status === 'editing') {
+    $('#tracker-status-tag').textContent = 'Editing in Progress';
+    $('#tracker-status-tag').style.color = '#ffd500';
+    conn1.className = 'timeline-connector done';
+    conn2.className = 'timeline-connector done';
+    step2.className = 'timeline-step step-done';
+    step2.querySelector('.timeline-node').textContent = '✓';
+    step3.className = 'timeline-step step-active';
+  } else if (order.status === 'delivered') {
+    $('#tracker-status-tag').textContent = 'Delivered ✓';
+    $('#tracker-status-tag').style.color = '#25d366';
+    conn1.className = 'timeline-connector done';
+    conn2.className = 'timeline-connector done';
+    conn3.className = 'timeline-connector done';
+    step2.className = 'timeline-step step-done';
+    step2.querySelector('.timeline-node').textContent = '✓';
+    step3.className = 'timeline-step step-done';
+    step3.querySelector('.timeline-node').textContent = '✓';
+    step4.className = 'timeline-step step-done';
+    step4.querySelector('.timeline-node').textContent = '✓';
+  } else {
+    // Advance payment
+    $('#tracker-status-tag').textContent = 'Advance Payment (UPI)';
+    $('#tracker-status-tag').style.color = '#38bdf8';
+    conn1.className = 'timeline-connector done';
+    step2.className = 'timeline-step step-active';
+  }
+
+  orderModal.showModal();
+}
+
+// Nav "Track Order 📦" click
+const navTrackOrder = document.querySelector('#nav-track-order');
+if (navTrackOrder) {
+  navTrackOrder.onclick = e => {
+    e.preventDefault();
+    let activeOrder = null;
+    try {
+      activeOrder = JSON.parse(localStorage.getItem('sihu_active_order'));
+    } catch {}
+
+    if (activeOrder) {
+      renderOrderTracker(activeOrder);
+    } else {
+      // Default sample order tracking demo
+      renderOrderTracker({
+        orderId: 'SIHU-ORD-8491',
+        packageName: 'Standard Reel Edit',
+        expertName: 'Phani (AI Reels Expert)',
+        delivery: '2 Days Delivery',
+        packagePrice: 800,
+        status: 'advance_payment'
+      });
+    }
+  };
+}
+
+// Lookup by Order ID / Phone
+const lookupBtn = document.querySelector('#lookup-order-btn');
+const lookupInput = document.querySelector('#lookup-order-input');
+if (lookupBtn && lookupInput) {
+  lookupBtn.onclick = () => {
+    const val = lookupInput.value.trim().toLowerCase();
+    if (!val) return;
+    try {
+      const allOrders = JSON.parse(localStorage.getItem('sihu_all_orders') || '[]');
+      const found = allOrders.find(o =>
+        (o.orderId && o.orderId.toLowerCase().includes(val)) ||
+        (o.clientPhone && o.clientPhone.includes(val))
+      );
+      if (found) {
+        renderOrderTracker(found);
+      } else {
+        toast('Order not found. Check Order ID or phone number.');
+      }
+    } catch {
+      toast('Order not found.');
+    }
+  };
+}
+
+// "Book Another Expert" button inside tracker
+const trackerNewOrderBtn = document.querySelector('#tracker-new-order-btn');
+if (trackerNewOrderBtn) {
+  trackerNewOrderBtn.onclick = () => {
+    orderModal.close();
+    const expertsSec = document.querySelector('#experts');
+    if (expertsSec) expertsSec.scrollIntoView({ behavior: 'smooth' });
+  };
+}
+
+// Initial Marketplace Render on load
+renderMarketplaceExperts('all', '');

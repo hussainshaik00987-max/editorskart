@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sihu — Hire Verified Editors &amp; Reel Creators | 1-Tap Booking</title><meta name="description" content="Watch real 30-second skill reels and hire verified video editors, reel makers, and photographers in 1 tap. 30-min iPhone reels, same-day edits, zero blind hiring."><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#ffd500"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="stylesheet" href="style.css"></head><body>
-<header><a class="brand" href="#">✦ <b>sihu<span>partner</span></b></a><nav><a href="#reels">Explore Reels ⚡</a><a href="#services">Services</a><a href="#process">How it works</a></nav><div class="header-actions"><button class="small quiet login-btn" id="login">Login ↗</button><button class="small primary apply">Apply as creator <span>↗</span></button></div></header>
+<header><a class="brand" href="#">✦ <b>sihu<span>partner</span></b></a><nav><a href="#experts">Book Experts ⚡</a><a href="#reels">Explore Reels</a><a href="#services">Services</a><a href="#tracker" id="nav-track-order">Track Order 📦</a></nav><div class="header-actions"><button class="small quiet login-btn" id="login">Login ↗</button><button class="small primary apply">Apply as creator <span>↗</span></button></div></header>
 <main><section class="hero" id="studio"><div class="hero-copy"><div class="eyebrow"><i></i> A NEW CHAPTER FOR CREATORS &amp; BRANDS</div><h1 class="launch-title">WATCH REAL WORK.<br><em>HIRE IN 1 TAP<span>.</span></em></h1><h2 class="launch-subtitle">The visual marketplace for elite video editors &amp; reel creators.</h2><p>No blind hiring. No text-only proposals. Scroll 30-second skill reels, see real edits, and hire verified creators with fast delivery.</p><div class="actions"><a href="#reels" class="primary button-cta">Explore Reels &amp; Hire ⚡</a></div><div class="hero-note"><span class="mini-icons">⚡ <b>Pr</b> Ae ◉</span><span>30-min iPhone reels · Same-day photo edits · 100% verified talent</span></div></div>
 <div class="scene" aria-label="Animated three-dimensional editing workspace"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="float-label top-label"><span class="live-dot"></span> SIHU · LAUNCH IN PROGRESS</div><div class="editor" id="editor"><div class="editor-top"><span class="dots">● ● ●</span><span>the_next_chapter.mov</span><span>↗</span></div><div class="preview"><img class="hero-stock" src="assets/cinematic-mountains.jpg" alt="Dramatic mountain peaks beneath clouds" width="1400" height="933" fetchpriority="high"><div class="photo-shade"></div><div class="preview-grid"></div><span class="preview-tag">CREATIVE INSPIRATION</span><div class="preview-title">CREATE<br><i>WITH SIHU.</i></div><span class="frame">FRAME 024 / YOUR VISION</span><button id="play" aria-label="Pause animation">Ⅱ</button></div><div class="transport"><span>↶ &nbsp; ↷</span><span id="timecode">00:00:04:12</span><span>4K <b>●</b></span></div><div class="timeline"><div class="ruler">00:00 <span>00:05</span><span>00:10</span><span>00:15</span></div><div class="track purple">V1 <b>THE BIG IDEA</b></div><div class="track yellow">V2 <b>YOUR SIGNATURE STYLE</b></div><div class="track green">A1 <b>▂▆▃▇▅▂▅▇▃▆▂▇▅▃▆▂▅▇▃▆▂▇▅▃▆▂▅▇▃▆</b></div><div class="playhead"></div></div></div><div class="float-label bottom-label"><span class="badge-icon">✦</span><div>Something great is coming.<small>Stay inspired. Launch date to come.</small></div></div><div class="tool-cube">Ae</div><div class="coordinate">X 028 &nbsp; Y 064 &nbsp; Z ∞</div></div></section>
 
@@ -169,6 +169,35 @@
     </div>
   </div>
 </div>
+
+<!-- Screen 1: SIHU Expert Marketplace (Amazon / Flipkart for Digital Talent) -->
+<section id="experts" class="experts-section">
+  <div class="section-head">
+    <div class="eyebrow">SIHU EXPERT MARKETPLACE</div>
+    <h2>Book Digital Experts Easily.<br><em>Choose an editor, select a package &amp; order in 1 tap.</em></h2>
+    <p>No endless chatting or unclear pricing. Search verified specialists, compare fixed packages, and track live editing progress.</p>
+  </div>
+
+  <div class="marketplace-search-box">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="expert-search-input" placeholder="Search by name or skill: Hussain, Phani, Sandeep, Prudvi, Sai, reels, AI, budget..." aria-label="Search editors">
+      <button id="search-clear-btn" class="search-clear-btn" style="display:none" aria-label="Clear search">✕</button>
+    </div>
+    <div class="marketplace-filter-chips" id="marketplace-filter-chips">
+      <button class="filter-chip active" data-filter="all">All Experts (5)</button>
+      <button class="filter-chip" data-filter="reels">🎬 Reels</button>
+      <button class="filter-chip" data-filter="youtube">▶ YouTube</button>
+      <button class="filter-chip" data-filter="ai-reels">🤖 AI Reels</button>
+      <button class="filter-chip" data-filter="budget">⚡ Budget</button>
+      <button class="filter-chip" data-filter="design">🎨 Design &amp; Logos</button>
+    </div>
+  </div>
+
+  <div class="experts-grid" id="experts-grid">
+    <!-- Real Team Cards rendered here -->
+  </div>
+</section>
 
 <section id="reels" class="reels-section"><div class="section-head"><div class="eyebrow">FEATURED SKILL REELS</div><h2>Watch real work.<br><em>Hire in one tap.</em></h2><p>Swipe or scroll through real edits. Watch 30 seconds of pure craft before making your choice.</p></div>
 <div class="service-tabs-nav" id="service-master-tabs">
@@ -585,5 +614,160 @@
     <div class="portal-controls"><button type="submit" class="primary hire-submit-btn">Send Request &amp; Connect on WhatsApp ⚡</button></div>
   </form>
 </div></dialog>
+
+<!-- Screen 2: Editor Profile & Fixed Packages Modal -->
+<dialog id="expert-profile-modal" class="expert-profile-modal">
+  <div class="modal-top">
+    <div class="profile-header-meta">
+      <div class="expert-avatar-circle" id="profile-modal-avatar">H</div>
+      <div>
+        <div class="profile-name-badge-row">
+          <h2 id="profile-modal-name">Hussain</h2>
+          <span class="verified-tag">✦ Verified SIHU Expert</span>
+        </div>
+        <p id="profile-modal-role" class="profile-role-text">Creators ki long videos editing &amp; YouTube</p>
+      </div>
+    </div>
+    <button id="expert-profile-close" class="quiet close-btn" aria-label="Close profile">✕</button>
+  </div>
+  <div class="expert-profile-body">
+    <div class="profile-stats-strip">
+      <span class="stat-pill" id="profile-modal-delivery">⚡ 2–4 Days Delivery</span>
+      <span class="stat-pill" id="profile-modal-rating">★ 4.9 Rating</span>
+      <span class="stat-pill" id="profile-modal-badge">✦ Top Talent</span>
+    </div>
+
+    <div class="profile-about-box">
+      <h4>ABOUT THIS EXPERT</h4>
+      <p id="profile-modal-bio"></p>
+    </div>
+
+    <div class="profile-packages-section">
+      <div class="packages-headline">
+        <div>
+          <h3>CHOOSE A PACKAGE</h3>
+          <small>Fixed price &amp; fixed delivery time. Zero hidden charges.</small>
+        </div>
+      </div>
+      <div class="profile-packages-grid" id="profile-packages-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Screen 3: Order Placement & Live Progress Tracker Modal -->
+<dialog id="order-status-modal" class="order-status-modal">
+  <div class="modal-top">
+    <a class="brand" href="#">✦ <b>sihu<span>order</span></b></a>
+    <button id="order-modal-close" class="quiet close-btn" aria-label="Close order tracker">✕</button>
+  </div>
+  <div class="order-modal-body">
+    <!-- View A: Order Checkout / Confirmation -->
+    <div id="order-checkout-view" class="order-view-card">
+      <div class="eyebrow">ORDER SUMMARY</div>
+      <h2 id="checkout-package-name">Standard Reel Edit</h2>
+      <div class="order-summary-details">
+        <div><span>Assigned Expert:</span> <strong id="checkout-expert-name">Phani</strong></div>
+        <div><span>Turnaround Time:</span> <strong id="checkout-delivery-time">2 Days Delivery</strong></div>
+        <div><span>Package Price:</span> <strong id="checkout-total-price" class="price-highlight">₹800</strong></div>
+      </div>
+
+      <div class="advance-payment-notice">
+        <div class="upi-header">
+          <span>⚡ ADVANCE PAYMENT (UPI)</span>
+          <small>Pay advance to lock in editing queue</small>
+        </div>
+        <p>GPay / PhonePe / Paytm to: <strong class="upi-id-copy" id="upi-id-text">7989797016@ybl</strong> <button type="button" class="copy-btn" id="copy-upi-btn" title="Copy UPI ID">Copy</button></p>
+        <small>Or scan UPI QR on WhatsApp after confirming order.</small>
+      </div>
+
+      <form id="order-checkout-form">
+        <input type="hidden" id="order-expert-id" name="expert_id">
+        <input type="hidden" id="order-package-title" name="package_name">
+        <input type="hidden" id="order-package-price" name="package_price">
+
+        <label>Your Name *<input type="text" name="client_name" placeholder="Your name or channel name" required></label>
+        <label>WhatsApp Number *<input type="tel" name="client_phone" placeholder="+91 98765 43210" required></label>
+        <label>Email *<input type="email" name="client_email" placeholder="you@example.com" required></label>
+        <label>Footage Link or Project Brief *<textarea name="project_brief" rows="2" placeholder="Google Drive / Dropbox footage link, references, or instructions..." required></textarea></label>
+        
+        <p id="checkout-error" class="error-text" role="alert"></p>
+        <button type="submit" class="primary checkout-submit-btn">Place Order &amp; Pay Advance via UPI ⚡</button>
+      </form>
+    </div>
+
+    <!-- View B: Live Progress Tracker (Screen 3) -->
+    <div id="order-tracker-view" class="order-view-card" style="display:none">
+      <div class="tracker-header">
+        <div>
+          <span class="order-id-badge" id="tracker-order-id">#SIHU-ORD-7491</span>
+          <h2 id="tracker-package-title">Standard Reel Edit</h2>
+        </div>
+        <span class="tracker-status-tag" id="tracker-status-tag">Editing in Progress</span>
+      </div>
+
+      <div class="tracker-meta-grid">
+        <div><span>Expert</span><strong id="tracker-expert-name">Phani</strong></div>
+        <div><span>Delivery</span><strong id="tracker-delivery">2 Days</strong></div>
+        <div><span>Total</span><strong id="tracker-price">₹800</strong></div>
+      </div>
+
+      <!-- 4-Stage Progress Timeline -->
+      <div class="progress-timeline-container">
+        <div class="timeline-step step-done" id="step-1">
+          <div class="timeline-node">✓</div>
+          <div class="timeline-label">
+            <strong>Order Placed</strong>
+            <small id="step-1-time">Brief submitted</small>
+          </div>
+        </div>
+        <div class="timeline-connector" id="conn-1"></div>
+
+        <div class="timeline-step step-active" id="step-2">
+          <div class="timeline-node">2</div>
+          <div class="timeline-label">
+            <strong>Advance Payment</strong>
+            <small id="step-2-status">UPI verification</small>
+          </div>
+        </div>
+        <div class="timeline-connector" id="conn-2"></div>
+
+        <div class="timeline-step" id="step-3">
+          <div class="timeline-node">3</div>
+          <div class="timeline-label">
+            <strong>Editing</strong>
+            <small>Work in progress</small>
+          </div>
+        </div>
+        <div class="timeline-connector" id="conn-3"></div>
+
+        <div class="timeline-step" id="step-4">
+          <div class="timeline-node">4</div>
+          <div class="timeline-label">
+            <strong>Delivered</strong>
+            <small>Review &amp; export</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="tracker-actions">
+        <a id="tracker-wa-btn" href="#" target="_blank" rel="noopener noreferrer" class="tracker-wa-btn">
+          <span>💬</span> Chat with Sihu Team on WhatsApp
+        </a>
+        <button type="button" class="quiet new-order-btn" id="tracker-new-order-btn">← Book Another Expert</button>
+      </div>
+
+      <!-- Quick Lookup by Order ID / Phone -->
+      <div class="tracker-lookup-box">
+        <small>Track another order:</small>
+        <div class="lookup-input-row">
+          <input type="text" id="lookup-order-input" placeholder="Enter Order ID (e.g. SIHU-ORD-...) or WhatsApp Phone">
+          <button type="button" class="primary small" id="lookup-order-btn">Track</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
 
 <dialog id="application"><div class="modal-top"><a class="brand" href="#">✦ <b>sihu<span>partner</span></b></a><button id="close" class="quiet" aria-label="Close application">✕</button></div><div class="application-body"><aside><div class="eyebrow">YOUR NEXT CHAPTER</div><h2>A little about you.<br>A world of<br><em>possibilities.</em></h2><ol id="steps"></ol><small>Apply to join Sihu. Your details are shared with our review team only after email verification. Account access requires admin approval.</small></aside><div class="form-area"><div id="progress"></div><form id="form"><div id="fields"></div><p id="error" role="alert"></p><div class="form-actions"><button type="button" class="quiet" id="back">← Back</button><button type="submit" class="primary" id="next">Continue →</button></div></form></div></div></dialog><div id="toast" role="status"></div><script src="app.js"></script><script src="portal.js" defer></script></body></html>
