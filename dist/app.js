@@ -477,23 +477,27 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// PWA Install Prompt Listener
+// PWA & APK Install Manager
+if (pwaBtn) {
+  pwaBtn.onclick = () => {
+    showToast('Downloading Sihu APK... 📲 Check notification bar to install.');
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(({ outcome }) => {
+          if (outcome === 'accepted' && notif) {
+            notif.classList.remove('visible');
+          }
+          deferredPrompt = null;
+        });
+      } catch {}
+    }
+  };
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  if (pwaBtn) {
-    pwaBtn.style.display = 'inline-flex';
-    pwaBtn.onclick = async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        pwaBtn.style.display = 'none';
-        if (notif) notif.classList.remove('visible');
-      }
-      deferredPrompt = null;
-    };
-  }
 });
 
 // =======================================================

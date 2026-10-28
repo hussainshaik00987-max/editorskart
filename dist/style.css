@@ -2706,11 +2706,11 @@ aside small {
     font-size: 11px;
   }
   .hero h1.launch-title {
-    font-size: clamp(40px, 11vw, 64px);
-    letter-spacing: -2px;
+    font-size: clamp(36px, 9vw, 52px);
+    letter-spacing: -1.5px;
   }
   .launch-subtitle {
-    font-size: 18px;
+    font-size: 17px;
   }
   .scene {
     height: 380px;
@@ -2749,11 +2749,57 @@ aside small {
   .form-area {
     padding: 24px;
   }
+
+  /* Smooth Horizontal Swipe for Category Chips on Mobile */
+  .marketplace-filter-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+    margin: 14px -14px 0;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .marketplace-filter-chips::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  /* Mobile-Friendly Welcome Notification Banner */
   .welcome-notification {
-    left: 14px;
-    right: 14px;
-    bottom: 14px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
     max-width: none;
+    padding: 16px 18px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  }
+  .notif-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 14px;
+  }
+  .notif-actions .notif-cta,
+  .notif-actions .notif-app-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    min-height: 44px;
+    border-radius: var(--radius-pill);
+    box-sizing: border-box;
   }
   .experts-grid {
     grid-template-columns: 1fr;
