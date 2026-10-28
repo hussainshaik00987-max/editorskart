@@ -601,9 +601,9 @@ const SIHU_TEAM = [
     rating: '★ 4.9 (52 orders)',
     delivery: '2 - 4 Days',
     bio: 'Specialist in creator-first high retention editing. Long videos for creators, YouTube pacing, podcast multi-cam, sound design, and viral short-form retention.',
-    website: 'https://instagram.com/__hussain21_',
-    portfolioLink: 'https://instagram.com/__hussain21_',
-    instagram: 'https://instagram.com/__hussain21_',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Hussain · Cinematic Long Videos & YouTube Reel',
     packages: [
       {
         name: 'Standard Reel Edit',
@@ -645,9 +645,9 @@ const SIHU_TEAM = [
     rating: '★ 5.0 (64 orders)',
     delivery: '2 Days',
     bio: 'Expert across all editing styles. Hyper-engaging AI content reels, avatar workflows, script-to-video, 3D motion graphics, and viral short-form systems.',
-    website: 'https://phani.design/portfolio',
-    portfolioLink: 'https://phani.design/portfolio',
-    instagram: 'https://instagram.com/phani_edits',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Phani · AI Content Reels & Visual FX',
     packages: [
       {
         name: 'AI Reel (30 to 60 sec)',
@@ -689,9 +689,9 @@ const SIHU_TEAM = [
     rating: '★ 4.8 (38 orders)',
     delivery: 'Same-Day - 2 Days',
     bio: 'Quick, reliable basic AI video editing for small videos, YouTube thumbnails, social media banners, and carousel graphics.',
-    website: 'https://behance.net/sandeepcreatives',
-    portfolioLink: 'https://behance.net/sandeepcreatives',
-    instagram: 'https://instagram.com/sandeep_ai_designs',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Sandeep · Social Creatives & AI Shorts Demo',
     packages: [
       {
         name: 'Social Media Poster / Banner',
@@ -733,9 +733,9 @@ const SIHU_TEAM = [
     rating: '★ 4.8 (41 orders)',
     delivery: '1 - 2 Days',
     bio: 'Affordable, clean video editing for students, budget creators, simple vlog cuts, basic Instagram reels, and status clips.',
-    website: 'https://drive.google.com/drive/folders/prudvi-sample-cuts',
-    portfolioLink: 'https://drive.google.com/drive/folders/prudvi-sample-cuts',
-    instagram: 'https://instagram.com/prudvi_edits',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Prudvi · Budget Reels & Fast Viral Cuts',
     packages: [
       {
         name: 'Basic Reel Edit',
@@ -777,9 +777,9 @@ const SIHU_TEAM = [
     rating: '★ 4.9 (45 orders)',
     delivery: '1 - 3 Days',
     bio: 'Professional logo designer and graphic artist. Business logos, cinematic posters, movie posters, business cards, and vector branding.',
-    website: 'https://behance.net/saigraphicdesigns',
-    portfolioLink: 'https://behance.net/saigraphicdesigns',
-    instagram: 'https://instagram.com/sai_vector_graphics',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Sai · Vector Logos & Brand Posters Portfolio',
     packages: [
       {
         name: 'Promotional / Event Poster',
@@ -856,10 +856,9 @@ function getApprovedMarketplaceExperts() {
       rating: '★ 5.0 (Verified)',
       delivery: c.turnaround || '1 - 2 Days',
       bio: c.bio || `Specialist in ${c.category}. Tools: ${(c.software || []).join(', ') || 'Standard'}. ${c.experience || '1'} years experience based in ${c.city || 'India'}.`,
-      portfolioLink: c.portfolio || (c.instagram ? (c.instagram.startsWith('http') ? c.instagram : `https://instagram.com/${c.instagram.replace(/^@/, '')}`) : 'https://instagram.com/sihu_creators'),
-      website: c.portfolio || (c.instagram ? (c.instagram.startsWith('http') ? c.instagram : `https://instagram.com/${c.instagram.replace(/^@/, '')}`) : 'https://instagram.com/sihu_creators'),
-      instagram: c.instagram ? (c.instagram.startsWith('http') ? c.instagram : `https://instagram.com/${c.instagram.replace(/^@/, '')}`) : '',
-      previewTitle: `${c.name} · Portfolio Website`,
+      portfolioLink: c.portfolio || '',
+      previewUrl: (c.portfolio && c.portfolio.includes('.mp4')) ? c.portfolio : 'assets/sample-reel.mp4',
+      previewTitle: `${c.name} · Portfolio Samples`,
       packages: packages
     };
   });
@@ -960,14 +959,6 @@ function renderMarketplaceExperts(activeFilter = 'all', searchQuery = '') {
       e.stopPropagation();
       const id = btn.dataset.expertId;
       openExpertProfile(id);
-      setTimeout(() => {
-        const spotter = document.querySelector('#profile-preview-player-card');
-        if (spotter) {
-          spotter.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          spotter.classList.add('spotter-highlight');
-          setTimeout(() => spotter.classList.remove('spotter-highlight'), 1800);
-        }
-      }, 100);
     };
   });
 }
@@ -1025,86 +1016,66 @@ function openExpertProfile(expertId) {
   $('#profile-modal-badge').textContent = `✦ ${expert.badge}`;
   $('#profile-modal-bio').textContent = expert.bio;
 
-  // Work Preview & Website Spotter Section (Video button tab removed, website links displayed on spotter)
-  const mainWebsiteUrl = expert.website || expert.portfolioLink || 'https://instagram.com/sihu_creators';
+  // Work Preview & Portfolio Link Section
   const previewLink = $('#profile-modal-preview-link');
+  const previewThumb = $('#profile-preview-thumb');
+  const previewPlayBtn = $('#profile-play-demo-btn');
+  const previewBtnLabel = $('#profile-preview-btn-label');
+
   if (previewLink) {
-    previewLink.href = mainWebsiteUrl;
-    previewLink.textContent = 'Open Website ↗';
-    previewLink.style.display = 'inline-flex';
+    if (expert.portfolioLink) {
+      previewLink.href = expert.portfolioLink;
+      previewLink.style.display = 'inline-flex';
+      previewLink.textContent = 'Open Portfolio Link ↗';
+    } else {
+      previewLink.href = 'https://instagram.com/sihu_creators';
+      previewLink.textContent = 'View Samples on Instagram ↗';
+    }
   }
 
-  const spotterPanel = $('#video-spotter-panel');
-  if (spotterPanel) {
-    const instagramUrl = expert.instagram ? (expert.instagram.startsWith('http') ? expert.instagram : `https://instagram.com/${expert.instagram.replace(/^@/, '')}`) : null;
+  if (previewThumb) {
+    if (expert.category === 'design') {
+      previewThumb.style.backgroundImage = "url('assets/reel-7-thumbnail.jpg')";
+    } else {
+      previewThumb.style.backgroundImage = "url('assets/reel-1-thumbnail.jpg')";
+    }
+  }
 
-    spotterPanel.innerHTML = `
-      <div class="spotter-card-inner">
-        <div class="spotter-header-row">
-          <div class="spotter-icon-badge">🌐</div>
-          <div>
-            <span class="spotter-badge">VERIFIED CREATOR PORTFOLIO &amp; WEBSITE</span>
-            <h3 class="spotter-title">${esc(expert.name)}'s Official Website</h3>
-          </div>
-        </div>
+  if (previewBtnLabel) {
+    previewBtnLabel.textContent = `Watch ${expert.name}'s Work Samples / Demo`;
+  }
 
-        <div class="spotter-links-list">
-          <div class="spotter-link-item">
-            <div class="spotter-link-details">
-              <span class="link-label">🔗 Official Portfolio Website:</span>
-              <a href="${esc(mainWebsiteUrl)}" target="_blank" rel="noopener noreferrer" class="spotter-url-link">
-                ${esc(mainWebsiteUrl)}
-              </a>
-            </div>
-            <div class="spotter-btn-group">
-              <a href="${esc(mainWebsiteUrl)}" target="_blank" rel="noopener noreferrer" class="primary spotter-btn">
-                Visit Website ↗
-              </a>
-              <button type="button" class="spotter-copy-btn" data-url="${esc(mainWebsiteUrl)}">
-                📋 Copy
-              </button>
-            </div>
-          </div>
-
-          ${instagramUrl && instagramUrl !== mainWebsiteUrl ? `
-          <div class="spotter-link-item">
-            <div class="spotter-link-details">
-              <span class="link-label">📸 Verified Instagram Profile:</span>
-              <a href="${esc(instagramUrl)}" target="_blank" rel="noopener noreferrer" class="spotter-url-link">
-                ${esc(instagramUrl)}
-              </a>
-            </div>
-            <div class="spotter-btn-group">
-              <a href="${esc(instagramUrl)}" target="_blank" rel="noopener noreferrer" class="spotter-btn secondary">
-                Open Instagram ↗
-              </a>
-              <button type="button" class="spotter-copy-btn" data-url="${esc(instagramUrl)}">
-                📋 Copy
-              </button>
-            </div>
-          </div>
-          ` : ''}
-        </div>
-
-        <div class="spotter-footer-note">
-          <span>🛡️ Verified Work Samples &amp; Portfolio · Review packages below to start order.</span>
-        </div>
-      </div>
-    `;
-
-    // Wire up copy buttons with feedback toast
-    spotterPanel.querySelectorAll('.spotter-copy-btn').forEach(btn => {
-      btn.onclick = () => {
-        const urlToCopy = btn.dataset.url;
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(urlToCopy).then(() => {
-            btn.textContent = 'Copied! ✓';
-            setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
-            showToast('Website link copied to clipboard! 📋');
-          });
-        }
-      };
-    });
+  if (previewPlayBtn) {
+    previewPlayBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (expert.previewUrl && expert.previewUrl.endsWith('.mp4')) {
+        const dummyCard = document.createElement('div');
+        dummyCard.className = 'reel-card';
+        dummyCard.innerHTML = `
+          <video class="reel-video" src="${expert.previewUrl}"></video>
+          <div class="reel-pill">⚡ ${expert.delivery}</div>
+          <div class="creator-badge">✦ Verified: ${expert.name}</div>
+          <h3>${expert.previewTitle || expert.name + ' Portfolio'}</h3>
+          <p>${expert.bio}</p>
+          <button class="hire-btn" data-creator="${expert.name}" data-category="${expert.tag}"></button>
+        `;
+        openReelModal(dummyCard);
+      } else if (expert.portfolioLink) {
+        window.open(expert.portfolioLink, '_blank');
+      } else {
+        const dummyCard = document.createElement('div');
+        dummyCard.className = 'reel-card';
+        dummyCard.innerHTML = `
+          <video class="reel-video" src="assets/sample-reel.mp4"></video>
+          <div class="reel-pill">⚡ ${expert.delivery}</div>
+          <div class="creator-badge">✦ Verified: ${expert.name}</div>
+          <h3>${expert.name} - Sample Video Work</h3>
+          <p>${expert.bio}</p>
+          <button class="hire-btn" data-creator="${expert.name}" data-category="${expert.tag}"></button>
+        `;
+        openReelModal(dummyCard);
+      }
+    };
   }
 
   const packagesGrid = $('#profile-packages-grid');
