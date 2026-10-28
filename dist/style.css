@@ -1620,63 +1620,183 @@ aside small {
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid var(--card-border);
-  background: #11141a;
-  min-height: 180px;
+  border: 1px solid var(--line);
+  background: #ffffff;
   box-shadow: var(--card-shadow);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.preview-thumb-banner {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  background-size: cover;
-  background-position: center;
+.profile-preview-player-card.spotter-highlight {
+  border-color: var(--red);
+  box-shadow: 0 0 24px var(--red-glow), var(--card-shadow-hover);
+}
+
+.video-spotter-panel {
+  padding: 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%);
+}
+
+.spotter-card-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.spotter-header-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.spotter-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--red-light);
+  color: var(--red);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  font-size: 20px;
+  flex-shrink: 0;
+  border: 1px solid rgba(230, 48, 34, 0.2);
 }
 
-.preview-thumb-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(17, 20, 26, 0.3) 0%, rgba(17, 20, 26, 0.8) 100%);
+.spotter-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.profile-play-demo-btn {
-  position: relative;
-  z-index: 2;
+.spotter-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+}
+
+.spotter-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spotter-link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.spotter-link-item:hover {
+  border-color: rgba(230, 48, 34, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.spotter-link-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+  flex: 1;
+}
+
+.link-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.spotter-url-link {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  word-break: break-all;
+  transition: color 0.2s;
+}
+
+.spotter-url-link:hover {
+  color: var(--red);
+}
+
+.spotter-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spotter-btn {
+  padding: 9px 18px;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: var(--radius-pill);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  background: var(--red);
-  color: #ffffff;
-  border-radius: var(--radius-pill);
-  font-weight: 800;
-  font-size: 13px;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(230, 48, 34, 0.5);
+  gap: 4px;
+  text-decoration: none;
   transition: all 0.2s;
 }
 
-.profile-play-demo-btn:hover {
-  transform: scale(1.04);
-  background: var(--red-hover);
+.spotter-btn.primary {
+  background: var(--red);
+  color: #ffffff;
+  box-shadow: 0 4px 12px var(--red-glow);
 }
 
-.profile-play-demo-btn .play-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+.spotter-btn.primary:hover {
+  background: var(--red-hover);
+  transform: translateY(-1px);
+}
+
+.spotter-btn.secondary {
+  background: #f1eee7;
+  color: var(--text-primary);
+  border: 1px solid var(--line);
+}
+
+.spotter-btn.secondary:hover {
+  background: #e5e1d6;
+}
+
+.spotter-copy-btn {
   background: #ffffff;
-  color: var(--red);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid var(--line);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.spotter-copy-btn:hover {
+  background: #faf8f5;
+  color: var(--text-primary);
+  border-color: #d8d4c9;
+}
+
+.spotter-footer-note {
   font-size: 11px;
-  padding-left: 2px;
+  color: var(--text-muted);
+  border-top: 1px dashed var(--line);
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .profile-about-box {
