@@ -20,7 +20,7 @@ function render(){
  if(step===2)body=input('Email address','email','email','you@example.com')+input('Phone number','phone','tel','+91 98765 43210');
  if(step===3)body=input('Country','country','text','India')+input('State / Province','state','text','Your state')+input('City','city','text','Your city');
  if(step===4)body='<fieldset class="software-options"><legend>Software you use *</legend><p>Select all that apply.</p><div class="choices">'+['Adobe Premiere Pro','DaVinci Resolve','Photoshop','Lightroom','Illustrator','After Effects','CapCut','Final Cut Pro','Blender','Other'].map(x=>`<label class="choice software-choice"><input type="checkbox" name="software" value="${x}" ${data.software.includes(x)?'checked':''}> <span>${x}</span></label>`).join('')+'</div></fieldset>'+input('Years of experience','experience','number','e.g. 2')+'<label>Your specialties · choose up to 5 *</label><div class="choices">'+['Thumbnails & Posters','Photo Retouching','Social media','Motion design','Weddings','Brand films','Color grading','Visual effects','Travel','Product films'].map(x=>`<button type="button" class="choice ${data.niches.includes(x)?'selected':''}" data-niche="${x}">${x}</button>`).join('')+'</div>';
- if(step===5)body=input('Instagram username','instagram','text','@yourusername')+input('Portfolio link','portfolio','url','https://yourportfolio.com',false)+'<p style="font-size:11px;color:#9aa68b">Use a public Instagram profile. Portfolio links can include your website, YouTube, or a shared collection.</p>';
+ if(step===5)body=input('Instagram username','instagram','text','e.g. @yourusername or handle')+input('Portfolio link','portfolio','text','https://instagram.com/..., YouTube, or Drive',false)+'<p style="font-size:11px;color:#9aa68b">Enter your Instagram username or paste your link. Portfolio can be Instagram, YouTube, or a shared Drive collection.</p>';
  if(step===6)body=select('Availability','availability',['Open to projects','Part-time','Full-time','Weekends'])+select('Work preference','work',['Remote','On location','Both'])+input('A few words about your style','bio','text','Cinematic cuts with a human touch',false);
  if(step===7)body='<div class="summary">'+[['Craft',data.category],['Name',data.name],['Email',data.email],['Location',[data.city,data.state,data.country].filter(Boolean).join(', ')],['Software',data.software.join(', ')],['Specialties',data.niches.join(', ')],['Instagram',data.instagram],['Availability',data.availability]].map(([k,v])=>`<div><small>${k}</small>${esc(v)}</div>`).join('')+'</div><label><input type="checkbox" name="consent" required> I agree to share these details with Sihu for application review.</label>';
  $('#fields').innerHTML=`<div class="eyebrow">STEP ${step+1} OF 8 · ${steps[step].toUpperCase()}</div><h2>${titles[step]}</h2><p>${descriptions[step]}</p>${body}`;
@@ -30,7 +30,24 @@ function render(){
 }
 function open(){complete=false;render();modal.showModal()}
 document.querySelectorAll('.apply').forEach(b=>b.onclick=open);document.querySelectorAll('#login, .login-btn').forEach(b=>b.onclick=()=>{if(window.Sihu)window.Sihu.open();else toast('Account service is loading. Please try again.')});if($('#admin-link'))$('#admin-link').onclick=e=>{e.preventDefault();if(window.Sihu)window.Sihu.openAdmin();else location.search='?admin'};$('#close').onclick=()=>{capture();modal.close()};$('#back').onclick=()=>{capture();step=Math.max(0,step-1);render()};
-$('#form').addEventListener('submit',e=>{e.preventDefault();capture();let error='';if(step===1){const d=new Date(data.dob+'T00:00:00'),now=new Date();let age=now.getFullYear()-d.getFullYear();if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;if(age<18||age>120||!Number.isFinite(age))error='Please enter a valid date of birth. Applicants must be 18 or older.'}if(step===2&&!/^\+?[\d\s()-]{10,18}$/.test(data.phone))error='Enter a valid phone number, including your country code.';if(step===4&&!data.niches.length)error='Choose at least one specialty.';if(step===4&&!data.software.length)error='Choose at least one software tool.';if(step===5&&!/^@?[a-zA-Z0-9._]{1,30}$/.test(data.instagram))error='Enter your Instagram username, not a link.';if(error){$('#error').textContent=error;return}if(step<7){step++;render();$('.form-area').scrollIntoView({block:'start',behavior:'smooth'})}else{if(window.Sihu){window.Sihu.submit(data)}else{toast('Account service is loading. Please try again.')}}});
+$('#form').addEventListener('submit',e=>{e.preventDefault();capture();let error='';if(step===1){const d=new Date(data.dob+'T00:00:00'),now=new Date();let age=now.getFullYear()-d.getFullYear();if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;if(age<18||age>120||!Number.isFinite(age))error='Please enter a valid date of birth. Applicants must be 18 or older.'}if(step===2&&!/^\+?[\d\s()-]{10,18}$/.test(data.phone))error='Enter a valid phone number, including your country code.';if(step===4&&!data.niches.length)error='Choose at least one specialty.';if(step===4&&!data.software.length)error='Choose at least one software tool.';if(step===5){
+  let ig = String(data.instagram || '').trim();
+  if (ig.includes('instagram.com/')) {
+    const m = ig.match(/instagram\.com\/([a-zA-Z0-9._]+)/);
+    if (m) ig = m[1];
+  }
+  ig = ig.replace(/^@+/, '').replace(/\s+/g, '_');
+  data.instagram = ig;
+  if (!ig || ig.length < 2) {
+    error = 'Please enter your Instagram username or profile link.';
+  }
+  if (data.portfolio && data.portfolio.trim()) {
+    let p = data.portfolio.trim();
+    if (!/^https?:\/\//i.test(p)) p = 'https://' + p;
+    data.portfolio = p;
+  }
+}
+if(error){$('#error').textContent=error;return}if(step<7){step++;render();$('.form-area').scrollIntoView({block:'start',behavior:'smooth'})}else{if(window.Sihu){window.Sihu.submit(data)}else{toast('Account service is loading. Please try again.')}}});
 $('#form').addEventListener('change',capture);
 let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;function motion(){document.body.classList.toggle('paused',paused);$('#motion').textContent=`Motion: ${paused?'off':'on'}`;$('#play').textContent=paused?'▶':'Ⅱ';$('#play').setAttribute('aria-label',paused?'Play animation':'Pause animation')}$('#motion').onclick=$('#play').onclick=()=>{paused=!paused;motion()};motion();
 let frame=108;setInterval(()=>{if(!paused){frame=(frame+1)%480;$('#timecode').textContent=`00:00:${String(Math.floor(frame/24)).padStart(2,'0')}:${String(frame%24).padStart(2,'0')}`}},1000/24);
@@ -483,6 +500,92 @@ window.addEventListener('beforeinstallprompt', e => {
 // SIHU EXPERT MARKETPLACE ENGINE (Screens 1, 2, 3)
 // =======================================================
 
+function getDefaultPackagesForCategory(category) {
+  const c = String(category || '').toLowerCase();
+  if (c.includes('graphic') || c.includes('design') || c.includes('logo') || c.includes('poster')) {
+    return [
+      {
+        name: 'Social Media Poster / Creative',
+        time: '1 day delivery',
+        revisions: '2 revisions',
+        price: 300,
+        desc: 'High-impact social media creative for Instagram, product promotions, or events.',
+        features: ['High-Res PNG/JPG', 'Brand Colors Match', 'Source Files', 'Fast Turnaround']
+      },
+      {
+        name: 'Business Logo Design',
+        time: '2 days delivery',
+        revisions: '3 revisions',
+        price: 800,
+        desc: '2 unique vector logo concepts, transparent PNGs, brand icon, and color palette.',
+        features: ['2 Logo Concepts', 'Vector SVG/PNG/PDF', 'Transparent Files', 'Social Media Avatar']
+      },
+      {
+        name: 'Premium Brand Identity Pack',
+        time: '3 days delivery',
+        revisions: 'Unlimited',
+        price: 1500,
+        desc: 'Full logo suite + business card + social banners + vector source files (.AI/.EPS).',
+        features: ['Full Vector Source Files', 'Business Card Design', 'Social Media Kit', 'Unlimited Revisions']
+      }
+    ];
+  } else if (c.includes('photo') || c.includes('retouch') || c.includes('lightroom')) {
+    return [
+      {
+        name: 'Basic Photo Retouch & Color Grade',
+        time: '1 day delivery',
+        revisions: '2 revisions',
+        price: 300,
+        desc: 'Lighting balance, skin tone correction, cinematic grade, and high-res export.',
+        features: ['High-Res Output', 'Light & Color Tuning', 'Fast Turnaround']
+      },
+      {
+        name: 'Portrait & Beauty Retouching',
+        time: '2 days delivery',
+        revisions: '2 revisions',
+        price: 600,
+        desc: 'Frequency separation, blemish removal, hair cleanup, and cinematic grading.',
+        features: ['Frequency Separation', 'Skin Texture Retention', 'Cinematic LUTs']
+      },
+      {
+        name: 'Product & Commercial Photo Pack',
+        time: '3 days delivery',
+        revisions: '3 revisions',
+        price: 1200,
+        desc: 'Pack of 5 commercial product shots with background removal and shadows.',
+        features: ['5 Product Shots', 'White/Clean Backgrounds', 'E-commerce Ready']
+      }
+    ];
+  } else {
+    return [
+      {
+        name: 'Standard Reel Edit',
+        time: '2 days delivery',
+        revisions: '2 revisions',
+        price: 800,
+        desc: 'Dynamic hook, fast pacing, animated captions, color correction & sound effects.',
+        features: ['9:16 Vertical Cut', 'Dynamic Subtitles', 'Sound SFX Design', '1080p / 4K Export']
+      },
+      {
+        name: 'YouTube Video (8 to 10 min)',
+        time: '4 days delivery',
+        revisions: '2 revisions',
+        price: 2000,
+        desc: 'Full retention YouTube editing with B-roll overlays, zooms, chapter pacing & audio mastering.',
+        features: ['16:9 4K Cut', 'Audio Enhancement', 'B-Roll & Graphics', 'High-CTR Pacing']
+      },
+      {
+        name: 'Creator Long-Form Master',
+        time: '5 days delivery',
+        revisions: '3 revisions',
+        price: 3000,
+        desc: 'End-to-end long-form cut + 2 promotional viral shorts extracted from the video.',
+        features: ['Complete Long Cut', '2 Free Promo Shorts', 'Soundtrack Mixing', 'Thumbnail Guidance']
+      }
+    ];
+  }
+}
+
 const SIHU_TEAM = [
   {
     id: 'hussain',
@@ -498,6 +601,9 @@ const SIHU_TEAM = [
     rating: '★ 4.9 (52 orders)',
     delivery: '2 - 4 Days',
     bio: 'Specialist in creator-first high retention editing. Long videos for creators, YouTube pacing, podcast multi-cam, sound design, and viral short-form retention.',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Hussain · Cinematic Long Videos & YouTube Reel',
     packages: [
       {
         name: 'Standard Reel Edit',
@@ -539,6 +645,9 @@ const SIHU_TEAM = [
     rating: '★ 5.0 (64 orders)',
     delivery: '2 Days',
     bio: 'Expert across all editing styles. Hyper-engaging AI content reels, avatar workflows, script-to-video, 3D motion graphics, and viral short-form systems.',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Phani · AI Content Reels & Visual FX',
     packages: [
       {
         name: 'AI Reel (30 to 60 sec)',
@@ -580,6 +689,9 @@ const SIHU_TEAM = [
     rating: '★ 4.8 (38 orders)',
     delivery: 'Same-Day - 2 Days',
     bio: 'Quick, reliable basic AI video editing for small videos, YouTube thumbnails, social media banners, and carousel graphics.',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Sandeep · Social Creatives & AI Shorts Demo',
     packages: [
       {
         name: 'Social Media Poster / Banner',
@@ -621,6 +733,9 @@ const SIHU_TEAM = [
     rating: '★ 4.8 (41 orders)',
     delivery: '1 - 2 Days',
     bio: 'Affordable, clean video editing for students, budget creators, simple vlog cuts, basic Instagram reels, and status clips.',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Prudvi · Budget Reels & Fast Viral Cuts',
     packages: [
       {
         name: 'Basic Reel Edit',
@@ -662,6 +777,9 @@ const SIHU_TEAM = [
     rating: '★ 4.9 (45 orders)',
     delivery: '1 - 3 Days',
     bio: 'Professional logo designer and graphic artist. Business logos, cinematic posters, movie posters, business cards, and vector branding.',
+    portfolioLink: 'https://instagram.com/sihu_creators',
+    previewUrl: 'assets/sample-reel.mp4',
+    previewTitle: 'Sai · Vector Logos & Brand Posters Portfolio',
     packages: [
       {
         name: 'Promotional / Event Poster',
@@ -691,13 +809,75 @@ const SIHU_TEAM = [
   }
 ];
 
+// Helper to load real approved creators into marketplace expert format
+function getApprovedMarketplaceExperts() {
+  let approved = [];
+  try {
+    approved = JSON.parse(localStorage.getItem('sihu_approved_creators') || '[]');
+  } catch {}
+  return approved.map(c => {
+    const cat = (c.category || 'Video Editor').toLowerCase();
+    let mappedCat = 'video';
+    let categories = ['all'];
+    if (cat.includes('reel') || cat.includes('short') || cat.includes('ugc')) {
+      mappedCat = 'reels';
+      categories.push('reels');
+    } else if (cat.includes('ai')) {
+      mappedCat = 'ai-reels';
+      categories.push('ai-reels', 'reels');
+    } else if (cat.includes('graphic') || cat.includes('design') || cat.includes('logo') || cat.includes('poster')) {
+      mappedCat = 'design';
+      categories.push('design');
+    } else if (cat.includes('youtube') || cat.includes('long')) {
+      mappedCat = 'youtube';
+      categories.push('youtube', 'video');
+    } else {
+      categories.push('video');
+    }
+
+    const defaultPackages = getDefaultPackagesForCategory(c.category);
+    let packages = defaultPackages;
+    if (Array.isArray(c.packages) && c.packages.length) {
+      packages = c.packages;
+    }
+    const minPrice = Math.min(...packages.map(p => p.price || 500));
+
+    return {
+      id: 'creator-' + (c.id || c.name.toLowerCase().replace(/[^a-z0-9]/g, '-')),
+      name: c.name,
+      initial: (c.name || 'C').charAt(0).toUpperCase(),
+      role: `${c.category} · ${(c.niches || []).slice(0, 2).join(', ') || 'Specialist'}`,
+      category: mappedCat,
+      categories: categories,
+      tag: c.category,
+      badge: 'Verified Creator',
+      startingPrice: minPrice,
+      priceDisplay: `From ₹${minPrice.toLocaleString()}`,
+      rating: '★ 5.0 (Verified)',
+      delivery: c.turnaround || '1 - 2 Days',
+      bio: c.bio || `Specialist in ${c.category}. Tools: ${(c.software || []).join(', ') || 'Standard'}. ${c.experience || '1'} years experience based in ${c.city || 'India'}.`,
+      portfolioLink: c.portfolio || '',
+      previewUrl: (c.portfolio && c.portfolio.includes('.mp4')) ? c.portfolio : 'assets/sample-reel.mp4',
+      previewTitle: `${c.name} · Portfolio Samples`,
+      packages: packages
+    };
+  });
+}
+
+function getAllMarketplaceExperts() {
+  const hideDemo = localStorage.getItem('sihu_hide_demo') === 'true';
+  const realApproved = getApprovedMarketplaceExperts();
+  return hideDemo ? realApproved : [...realApproved, ...SIHU_TEAM];
+}
+
 // Screen 1: Render Experts Grid
 function renderMarketplaceExperts(activeFilter = 'all', searchQuery = '') {
   const grid = document.querySelector('#experts-grid');
   if (!grid) return;
 
+  const allAvailable = getAllMarketplaceExperts();
   const q = (searchQuery || '').trim().toLowerCase();
-  const filtered = SIHU_TEAM.filter(expert => {
+  const filtered = allAvailable.filter(expert => {
     const matchesFilter = activeFilter === 'all' || expert.categories.includes(activeFilter);
     const matchesQuery = !q || (
       expert.name.toLowerCase().includes(q) ||
@@ -757,7 +937,10 @@ function renderMarketplaceExperts(activeFilter = 'all', searchQuery = '') {
           <small>Starting from</small>
           <strong>${esc(expert.priceDisplay)}</strong>
         </div>
-        <button type="button" class="view-packages-btn" data-expert-id="${expert.id}">View Packages ↗</button>
+        <div class="expert-card-actions">
+          <button type="button" class="expert-preview-btn" data-expert-id="${expert.id}">👁️ Preview</button>
+          <button type="button" class="view-packages-btn" data-expert-id="${expert.id}">View Packages ↗</button>
+        </div>
       </div>
     </article>
   `).join('');
@@ -769,7 +952,18 @@ function renderMarketplaceExperts(activeFilter = 'all', searchQuery = '') {
       openExpertProfile(id);
     };
   });
+
+  // Attach direct preview button click
+  grid.querySelectorAll('.expert-preview-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.expertId;
+      openExpertProfile(id);
+    };
+  });
 }
+
+window.renderMarketplace = renderMarketplaceExperts;
 
 // Search & Filter event handlers
 const searchInput = document.querySelector('#expert-search-input');
@@ -810,7 +1004,8 @@ if (profileCloseBtn && profileModal) {
 }
 
 function openExpertProfile(expertId) {
-  const expert = SIHU_TEAM.find(e => e.id === expertId);
+  const allExperts = getAllMarketplaceExperts();
+  const expert = allExperts.find(e => e.id === expertId);
   if (!expert || !profileModal) return;
 
   $('#profile-modal-avatar').textContent = expert.initial;
@@ -820,6 +1015,68 @@ function openExpertProfile(expertId) {
   $('#profile-modal-rating').textContent = expert.rating;
   $('#profile-modal-badge').textContent = `✦ ${expert.badge}`;
   $('#profile-modal-bio').textContent = expert.bio;
+
+  // Work Preview & Portfolio Link Section
+  const previewLink = $('#profile-modal-preview-link');
+  const previewThumb = $('#profile-preview-thumb');
+  const previewPlayBtn = $('#profile-play-demo-btn');
+  const previewBtnLabel = $('#profile-preview-btn-label');
+
+  if (previewLink) {
+    if (expert.portfolioLink) {
+      previewLink.href = expert.portfolioLink;
+      previewLink.style.display = 'inline-flex';
+      previewLink.textContent = 'Open Portfolio Link ↗';
+    } else {
+      previewLink.href = 'https://instagram.com/sihu_creators';
+      previewLink.textContent = 'View Samples on Instagram ↗';
+    }
+  }
+
+  if (previewThumb) {
+    if (expert.category === 'design') {
+      previewThumb.style.backgroundImage = "url('assets/reel-7-thumbnail.jpg')";
+    } else {
+      previewThumb.style.backgroundImage = "url('assets/reel-1-thumbnail.jpg')";
+    }
+  }
+
+  if (previewBtnLabel) {
+    previewBtnLabel.textContent = `Watch ${expert.name}'s Work Samples / Demo`;
+  }
+
+  if (previewPlayBtn) {
+    previewPlayBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (expert.previewUrl && expert.previewUrl.endsWith('.mp4')) {
+        const dummyCard = document.createElement('div');
+        dummyCard.className = 'reel-card';
+        dummyCard.innerHTML = `
+          <video class="reel-video" src="${expert.previewUrl}"></video>
+          <div class="reel-pill">⚡ ${expert.delivery}</div>
+          <div class="creator-badge">✦ Verified: ${expert.name}</div>
+          <h3>${expert.previewTitle || expert.name + ' Portfolio'}</h3>
+          <p>${expert.bio}</p>
+          <button class="hire-btn" data-creator="${expert.name}" data-category="${expert.tag}"></button>
+        `;
+        openReelModal(dummyCard);
+      } else if (expert.portfolioLink) {
+        window.open(expert.portfolioLink, '_blank');
+      } else {
+        const dummyCard = document.createElement('div');
+        dummyCard.className = 'reel-card';
+        dummyCard.innerHTML = `
+          <video class="reel-video" src="assets/sample-reel.mp4"></video>
+          <div class="reel-pill">⚡ ${expert.delivery}</div>
+          <div class="creator-badge">✦ Verified: ${expert.name}</div>
+          <h3>${expert.name} - Sample Video Work</h3>
+          <p>${expert.bio}</p>
+          <button class="hire-btn" data-creator="${expert.name}" data-category="${expert.tag}"></button>
+        `;
+        openReelModal(dummyCard);
+      }
+    };
+  }
 
   const packagesGrid = $('#profile-packages-grid');
   packagesGrid.innerHTML = expert.packages.map((pkg, idx) => `
@@ -875,7 +1132,8 @@ if (copyUpiBtn) {
 }
 
 function openOrderCheckout(expertId, pkgIndex) {
-  const expert = SIHU_TEAM.find(e => e.id === expertId);
+  const allExperts = getAllMarketplaceExperts();
+  const expert = allExperts.find(e => e.id === expertId);
   if (!expert || !orderModal) return;
   const pkg = expert.packages[pkgIndex];
   if (!pkg) return;
@@ -913,7 +1171,8 @@ if (orderForm) {
       return;
     }
 
-    const expert = SIHU_TEAM.find(e => e.id === expertId) || SIHU_TEAM[0];
+    const allExperts = getAllMarketplaceExperts();
+    const expert = allExperts.find(e => e.id === expertId) || SIHU_TEAM[0];
     const orderId = 'SIHU-ORD-' + Math.floor(1000 + Math.random() * 9000);
     const orderData = {
       orderId,
@@ -938,15 +1197,22 @@ if (orderForm) {
       localStorage.setItem('sihu_all_orders', JSON.stringify(allOrders));
     } catch {}
 
-    // Dispatch lead to InsForge backend if available
+    // Dispatch lead with expert linkage
     if (window.Sihu?.submitLead) {
       window.Sihu.submitLead({
+        order_id: orderId,
         client_name: clientName,
         client_phone: clientPhone,
         client_email: clientEmail,
         creator: `${expert.name} [${orderId}]`,
+        expert_name: expert.name,
+        expert_id: expert.id,
         project_type: packageName,
-        details: `[ORDER: ₹${packagePrice}] ${brief}`
+        package_name: packageName,
+        package_price: packagePrice,
+        delivery: expert.delivery,
+        details: `[ORDER #${orderId} - ₹${packagePrice}] ${brief}`,
+        assigned_creator_name: expert.name
       });
     }
 
@@ -1083,3 +1349,11 @@ if (trackerNewOrderBtn) {
 
 // Initial Marketplace Render on load
 renderMarketplaceExperts('all', '');
+
+// Auto-open Creator Application for friend invite / pro link (?apply, ?join, #apply)
+if (window.location.search.includes('apply') || window.location.search.includes('join') || window.location.hash === '#apply') {
+  setTimeout(() => {
+    const applyBtn = document.querySelector('.apply');
+    if (applyBtn) applyBtn.click();
+  }, 400);
+}

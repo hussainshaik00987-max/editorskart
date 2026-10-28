@@ -105,6 +105,30 @@ function sessionControls() {
   });
 }
 
+// Helper for creator package presets
+function getDefaultPackages(category) {
+  const c = String(category || '').toLowerCase();
+  if (c.includes('graphic') || c.includes('design') || c.includes('logo') || c.includes('poster')) {
+    return [
+      { name: 'Social Media Poster / Creative', time: '1 day delivery', revisions: '2 revisions', price: 300, desc: 'High-converting social poster for promotions.', features: ['High-Res PNG/JPG', 'Brand Colors Match'] },
+      { name: 'Business Logo Design', time: '2 days delivery', revisions: '3 revisions', price: 800, desc: '2 unique vector logo concepts.', features: ['2 Concepts', 'Vector SVG/PNG', 'Social Avatar'] },
+      { name: 'Complete Brand Identity Pack', time: '3 days delivery', revisions: 'Unlimited', price: 1500, desc: 'Full logo suite & brand assets.', features: ['Vector Source Files', 'Business Card'] }
+    ];
+  } else if (c.includes('photo') || c.includes('retouch') || c.includes('lightroom')) {
+    return [
+      { name: 'Photo Retouch & Color Grade', time: '1 day delivery', revisions: '2 revisions', price: 300, desc: 'Lighting balance & skin tone correction.', features: ['High-Res Export', 'Color LUTs'] },
+      { name: 'Portrait & Beauty Retouch', time: '2 days delivery', revisions: '2 revisions', price: 600, desc: 'Frequency separation & texture cleanup.', features: ['Skin Texture Intact', 'Clean Finish'] },
+      { name: 'Product Photo Pack (5 Shots)', time: '3 days delivery', revisions: '3 revisions', price: 1200, desc: 'Clean e-commerce product edits.', features: ['5 Product Shots', 'White Background'] }
+    ];
+  } else {
+    return [
+      { name: 'Standard Reel Edit', time: '2 days delivery', revisions: '2 revisions', price: 800, desc: 'Dynamic pacing, animated captions, color correction & SFX.', features: ['9:16 Cut', 'Captions', 'SFX'] },
+      { name: 'YouTube Video Edit (8 to 10 min)', time: '4 days delivery', revisions: '2 revisions', price: 2000, desc: 'Full retention YouTube editing with B-rolls.', features: ['16:9 4K Cut', 'B-Roll & Graphics'] },
+      { name: 'Commercial Brand Master Cut', time: '5 days delivery', revisions: '3 revisions', price: 3000, desc: 'End-to-end cinematic edit with master audio.', features: ['Cinematic Color', 'Audio Master'] }
+    ];
+  }
+}
+
 // Helper to get all approved creators from storage or DB
 async function getApprovedCreators() {
   let approved = [];
@@ -122,6 +146,8 @@ async function getApprovedCreators() {
         city: r.profile?.city || 'India',
         portfolio: r.profile?.portfolio || '',
         instagram: r.profile?.instagram || '',
+        bio: r.profile?.bio || '',
+        packages: r.profile?.packages || getDefaultPackages(r.profile?.category),
         turnaround: (r.profile?.category === 'Reel Maker') ? '30-Min Delivery' : 'Same-Day Edit'
       }));
       localStorage.setItem('sihu_approved_creators', JSON.stringify(approved));
@@ -159,16 +185,46 @@ async function loadAccount() {
     view.querySelector('#start-application').onclick = () => { portal.close(); document.querySelector('.apply').click(); };
   } else if (application.status === 'approved') {
     const account = await rpc('sihu_member_account');
+    const myName = (account.profile?.name || '').trim().toLowerCase();
     
     // Read projects assigned to this creator (strictly sanitized: NO client contact info)
     let assignedProjects = [];
     try {
       const allLeads = JSON.parse(localStorage.getItem('sihu_client_leads') || '[]');
-      assignedProjects = allLeads.filter(l => (
-        l.assigned_creator_id === application.id ||
-        (l.assigned_creator_name && l.assigned_creator_name.toLowerCase() === account.profile.name.toLowerCase())
-      ));
+      assignedProjects = allLeads.filter(l => {
+        const assignedName = (l.assigned_creator_name || '').trim().toLowerCase();
+        const expertName = (l.expert_name || '').trim().toLowerCase();
+        const creatorField = (l.creator || '').trim().toLowerCase();
+        return (
+          l.assigned_creator_id === application.id ||
+          (assignedName && (assignedName === myName || myName.includes(assignedName) || assignedName.includes(myName))) ||
+          (l.status === 'assigned' && expertName && (expertName === myName || myName.includes(expertName))) ||
+          (l.status === 'assigned' && creatorField && creatorField.includes(myName))
+        );
+      });
     } catch {}
+
+    const myPackages = account.profile.packages || getDefaultPackages(account.profile.category);
+    const packagesHtml = `
+      <div class="creator-pricing-box" style="margin: 20px 0; background: #171911; border: 1px solid #343825; border-radius: 14px; padding: 18px 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <h4 style="margin:0; font-size:14px; color:#fff;">⚡ Your Live Marketplace Packages</h4>
+            <small style="color:#9e9c85;">Shown to clients when booking your profile</small>
+          </div>
+          ${account.profile.portfolio ? `<a href="${escape(account.profile.portfolio)}" target="_blank" rel="noopener noreferrer" style="color:var(--yellow); font-size:12px; font-weight:700; text-decoration:none;">View Portfolio Link ↗</a>` : ''}
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px;">
+          ${myPackages.map(pkg => `
+            <div style="background:#11120d; border:1px solid #292c1c; border-radius:10px; padding:12px;">
+              <strong style="display:block; font-size:13px; color:#fff; margin-bottom:4px;">${escape(pkg.name)}</strong>
+              <div style="color:var(--yellow); font-size:16px; font-weight:800; font-family:'Space Grotesk',sans-serif;">₹${(pkg.price || 800).toLocaleString()}</div>
+              <small style="color:#888672; font-size:11px;">${escape(pkg.time)} · ${escape(pkg.revisions)}</small>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
 
     let projectsHtml = '';
     if (assignedProjects.length) {
@@ -179,12 +235,16 @@ async function loadAccount() {
           ${assignedProjects.map(p => `
             <div class="project-card">
               <div class="project-header">
-                <strong>${escape(p.project_type)}</strong>
-                <span class="status-pill approved">Assigned</span>
+                <div>
+                  <span class="status-pill approved" style="margin-right:6px;">${p.order_id ? '#' + escape(p.order_id) : 'Assigned'}</span>
+                  <strong>${escape(p.project_type || p.package_name || 'Project Deliverable')}</strong>
+                </div>
+                <span class="status-pill approved">In Progress</span>
               </div>
-              <p><strong>Requirements:</strong> ${escape(p.details || 'Standard deliverable required')}</p>
+              <p><strong>Package &amp; Price:</strong> <span style="color:#ffd500;font-weight:700;">₹${escape(p.package_price || 'Standard Escrow')}</span> · Delivery: ${escape(p.delivery || '2-4 Days')}</p>
+              <p><strong>Client Brief / Requirements:</strong> ${escape(p.details || p.brief || 'Standard deliverable required')}</p>
               <div class="project-meta"><small>Assigned on: ${new Date(p.assigned_at || p.timestamp).toLocaleDateString()}</small></div>
-              <a href="https://api.whatsapp.com/send?phone=917989797016&text=${encodeURIComponent('Hi Sihu Team, I am working on project: ' + p.project_type + '. I have an update.')}" target="_blank" class="primary small-btn wa-submit-btn">Update Sihu Manager on WhatsApp ⚡</a>
+              <a href="https://api.whatsapp.com/send?phone=917989797016&text=${encodeURIComponent('Hi Sihu Team, I am ' + account.profile.name + ' working on assigned order ' + (p.order_id ? '#' + p.order_id : '') + ' (' + (p.project_type || p.package_name || '') + '). I have an update.')}" target="_blank" class="primary small-btn wa-submit-btn">Update Sihu Manager on WhatsApp ⚡</a>
             </div>
           `).join('')}
         </div>
@@ -204,6 +264,7 @@ async function loadAccount() {
         <div><small>Software</small>${escape(account.profile.software.join(', '))}</div>
         <div><small>Location</small>${escape(account.profile.city)}</div>
       </div>
+      ${packagesHtml}
       ${projectsHtml}`;
   } else {
     const rejected = application.status === 'rejected';
@@ -258,10 +319,30 @@ async function adminQueue() {
   updateBrand();
   const { data: rows, error: queryError } = await client.database.from('sihu_applications').select(columns).eq('status', queueFilter).order('created_at', { ascending: false }).order('id').range(queuePage * pageSize, (queuePage + 1) * pageSize);
   if (queryError) throw queryError;
+  const hideDemo = localStorage.getItem('sihu_hide_demo') === 'true';
   view.innerHTML = heading('Application review queue.', 'Review creator submissions, verify portfolios, and approve accounts to publish them to the showcase.') +
     adminTabsHtml() +
+    `<div class="admin-demo-toggle-bar" style="margin-bottom: 14px; padding: 10px 14px; background: #171911; border: 1px solid #313524; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+      <span style="font-size: 12px; color: #b0ae98;">
+        Marketplace Demo Cards:
+        <strong style="color: ${hideDemo ? '#ff5252' : '#25d366'};">${hideDemo ? 'Hidden 🚫 (Only Real Creators)' : 'Visible 👁️ (Demo Active)'}</strong>
+      </span>
+      <button type="button" class="quiet small" id="admin-toggle-demo-btn" style="border: 1px solid #3c4028; padding: 5px 12px; font-size: 11px; border-radius: 999px;">
+        ${hideDemo ? 'Show Demo Cards' : 'Wipe / Hide Demo Cards 🚫'}
+      </button>
+    </div>` +
     `<div class="queue-header"><label>Filter applications<select id="queue-filter"><option value="pending">Pending review</option><option value="approved">Approved</option><option value="rejected">Not approved</option></select></label><div class="queue-stats"><span class="badge">Showing: ${escape(queueFilter)}</span></div></div><div id="review-list"></div><div class="portal-controls"><button class="quiet" id="queue-prev" ${queuePage === 0 ? 'disabled' : ''}>← Previous</button><span>Page ${queuePage + 1}</span><button class="quiet" id="queue-next" ${rows.length <= pageSize ? 'disabled' : ''}>Next →</button></div>`;
   
+  const demoToggleBtn = view.querySelector('#admin-toggle-demo-btn');
+  if (demoToggleBtn) {
+    demoToggleBtn.onclick = () => {
+      const cur = localStorage.getItem('sihu_hide_demo') === 'true';
+      localStorage.setItem('sihu_hide_demo', cur ? 'false' : 'true');
+      if (window.renderMarketplace) window.renderMarketplace();
+      adminQueue();
+    };
+  }
+
   view.querySelector('#tab-apps').onclick = () => run(null, adminQueue);
   view.querySelector('#tab-leads').onclick = () => run(null, adminLeadsQueue);
 
@@ -293,6 +374,7 @@ async function adminQueue() {
           // Update cache of approved creators
           await getApprovedCreators();
           if (window.renderShowcase) window.renderShowcase();
+          if (window.renderMarketplace) window.renderMarketplace();
           await adminQueue();
         } finally {
           controls.querySelectorAll('button').forEach(b => b.disabled = false);
@@ -335,47 +417,63 @@ async function adminLeadsQueue() {
 
   const list = view.querySelector('#leads-list');
   if (!leads.length) {
-    list.innerHTML = `<div class="empty-queue"><p>No client booking orders yet. When clients tap "Hire in 1 Tap ⚡", orders will appear here for assignment.</p></div>`;
+    list.innerHTML = `<div class="empty-queue"><p>No client booking orders yet. When clients book on the marketplace, orders will appear here for assignment.</p></div>`;
   } else {
     leads.slice().reverse().forEach((lead, reverseIdx) => {
       const realIdx = leads.length - 1 - reverseIdx;
       const card = document.createElement('article');
       card.className = 'review-card lead-card';
       const cleanPhone = String(lead.client_phone || '').replace(/[^0-9]/g, '');
-      const waMsg = encodeURIComponent(`Hi ${lead.client_name}, this is the Sihu Team regarding your request for ${lead.project_type}. We have verified your request and are coordinating with the creator.`);
+      const waMsg = encodeURIComponent(`Hi ${lead.client_name}, this is the Sihu Team regarding your request for ${lead.project_type || lead.package_name}. We have verified your request and are coordinating with the creator.`);
       const waLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${waMsg}`;
-      const mailLink = `mailto:${encodeURIComponent(lead.client_email)}?subject=${encodeURIComponent('Sihu Booking: ' + lead.project_type)}`;
+      const mailLink = `mailto:${encodeURIComponent(lead.client_email)}?subject=${encodeURIComponent('Sihu Booking: ' + (lead.project_type || lead.package_name))}`;
 
       const isAssigned = !!lead.assigned_creator_name;
+      const requestedExpert = lead.expert_name || (lead.creator ? lead.creator.split('[')[0].trim() : '');
 
       card.innerHTML = `
         <div class="review-header">
           <div>
-            <h3>${escape(lead.client_name)}</h3>
-            <span class="sub-label">Requested: <strong>${escape(lead.creator)}</strong> · ${new Date(lead.timestamp || Date.now()).toLocaleString()}</span>
+            <h3>${escape(lead.client_name)} ${lead.order_id ? `<small style="color:var(--yellow); font-size:12px;">#${escape(lead.order_id)}</small>` : ''}</h3>
+            <span class="sub-label">Requested: <strong>${escape(requestedExpert || lead.creator)}</strong> · ${new Date(lead.timestamp || Date.now()).toLocaleString()}</span>
           </div>
           <span class="status-pill ${isAssigned ? 'approved' : 'pending'}">${isAssigned ? 'Assigned' : 'Unassigned'}</span>
         </div>
         <div class="summary">
           <div><small>Client WhatsApp</small>${escape(lead.client_phone)}</div>
           <div><small>Client Email</small>${escape(lead.client_email)}</div>
-          <div><small>Project Type</small>${escape(lead.project_type)}</div>
-          <div><small>Project Notes</small>${escape(lead.details || 'No additional notes provided.')}</div>
+          <div><small>Package / Project</small>${escape(lead.package_name || lead.project_type)} ${lead.package_price ? `(₹${lead.package_price})` : ''}</div>
+          <div><small>Client Brief / Footage</small>${escape(lead.details || 'No additional notes provided.')}</div>
         </div>
         
         <div class="assignment-panel">
           <h4>Assign to Creator Profile:</h4>
           ${isAssigned ? `
             <div class="current-assignment">
-              <span class="status-pill approved">✓ Currently assigned to: <strong>${escape(lead.assigned_creator_name)}</strong></span>
+              <span class="status-pill approved">✓ Assigned to: <strong>${escape(lead.assigned_creator_name)}</strong></span>
               <small>Assigned at: ${new Date(lead.assigned_at).toLocaleString()}</small>
             </div>
           ` : ''}
+
+          ${requestedExpert ? `
+            <div class="target-expert-notice" style="margin: 8px 0 12px; padding: 10px 14px; background: #1b1e12; border-radius: 10px; border: 1px solid #3d4224; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <small style="color: #8f927b; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; display: block;">Client Requested Expert:</small>
+                <strong style="color: #ffd500; font-size: 15px;">${escape(requestedExpert)}</strong>
+              </div>
+              ${!isAssigned ? `
+                <button type="button" class="primary quick-assign-to-expert" style="padding: 6px 14px; font-size: 11px;">
+                  ⚡ 1-Click Assign to ${escape(requestedExpert)}
+                </button>
+              ` : ''}
+            </div>
+          ` : ''}
+
           <div class="assign-controls">
             <select class="creator-assign-select">
               <option value="">-- Choose Approved Creator --</option>
               ${approvedCreators.map(c => `
-                <option value="${c.id}" data-name="${escape(c.name)}" ${lead.assigned_creator_name === c.name || lead.creator.includes(c.name) ? 'selected' : ''}>
+                <option value="${c.id}" data-name="${escape(c.name)}" ${(lead.assigned_creator_name === c.name || (requestedExpert && requestedExpert.toLowerCase() === c.name.toLowerCase())) ? 'selected' : ''}>
                   ${escape(c.name)} (${escape(c.category)}) - ${escape(c.city)}
                 </option>
               `).join('')}
@@ -389,6 +487,17 @@ async function adminLeadsQueue() {
           <a href="${mailLink}" class="quiet mail-btn">Reply Client via Email ✉</a>
         </div>
       `;
+
+      const quickBtn = card.querySelector('.quick-assign-to-expert');
+      if (quickBtn) {
+        quickBtn.onclick = () => {
+          leads[realIdx].assigned_creator_name = requestedExpert;
+          leads[realIdx].assigned_at = new Date().toISOString();
+          leads[realIdx].status = 'assigned';
+          localStorage.setItem('sihu_client_leads', JSON.stringify(leads));
+          adminLeadsQueue();
+        };
+      }
 
       const assignBtn = card.querySelector('.assign-btn');
       const select = card.querySelector('.creator-assign-select');
@@ -451,7 +560,11 @@ window.Sihu = {
   openAdmin: () => openAdminPortal(),
   submit: profile => openPortal(structuredClone(profile)),
   submitLead: leadData => submitClientLead(leadData),
-  getApprovedCreators: () => getApprovedCreators()
+  getApprovedCreators: () => getApprovedCreators(),
+  toggleDemo: hide => {
+    localStorage.setItem('sihu_hide_demo', hide ? 'true' : 'false');
+    if (window.renderMarketplace) window.renderMarketplace();
+  }
 };
 
 if (new URLSearchParams(location.search).has('admin') || location.hash === '#admin') {
