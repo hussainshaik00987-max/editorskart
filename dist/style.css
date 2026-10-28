@@ -36,8 +36,8 @@
   --radius-lg: 24px;
   --radius-xl: 32px;
   --radius-pill: 9999px;
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "DM Sans", sans-serif;
-  --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 *, *::before, *::after {
@@ -152,7 +152,7 @@ header:hover {
 }
 
 .brand span {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: #ffffff;
@@ -280,8 +280,8 @@ nav a:hover {
 }
 
 .eyebrow {
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   font-weight: 700;
   color: var(--red);
   display: inline-flex;
@@ -317,10 +317,10 @@ h1, h2, h3, h4 {
 }
 
 h1.launch-title {
-  font-size: clamp(48px, 6.4vw, 86px);
+  font-size: clamp(38px, 5vw, 58px);
   font-weight: 800;
-  letter-spacing: -3.5px;
-  line-height: 0.98;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
   margin: 22px 0 18px;
   color: var(--text-primary);
 }
@@ -333,12 +333,10 @@ h1.launch-title em {
 }
 
 .launch-subtitle {
-  font-size: clamp(19px, 2.3vw, 25px);
-  font-weight: 600;
-  letter-spacing: -0.6px;
-  color: var(--text-secondary);
-  margin: 0 0 16px;
-  line-height: 1.35;
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.45;
 }
 
 .hero-copy > p {
@@ -362,7 +360,7 @@ h1.launch-title em {
   justify-content: center;
   gap: 10px;
   padding: 18px 42px;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.2px;
   border-radius: var(--radius-pill);
@@ -786,9 +784,9 @@ h1.launch-title em {
 }
 
 .section-head h2 {
-  font-size: clamp(34px, 4.4vw, 52px);
-  font-weight: 800;
-  letter-spacing: -1.5px;
+  font-size: clamp(26px, 3.4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
   line-height: 1.1;
   margin: 12px 0 10px;
   color: var(--text-primary);
@@ -894,7 +892,7 @@ h1.launch-title em {
   color: var(--text-secondary);
   padding: 8px 18px;
   border-radius: var(--radius-pill);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -971,7 +969,7 @@ h1.launch-title em {
 
 .expert-card-meta h3 {
   margin: 0 0 4px;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 800;
   color: var(--text-primary);
   display: flex;
@@ -983,7 +981,7 @@ h1.launch-title em {
   background: var(--red-light);
   color: var(--red);
   border: 1px solid rgba(230, 48, 34, 0.25);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   padding: 3px 8px;
   border-radius: var(--radius-pill);
@@ -1007,7 +1005,7 @@ h1.launch-title em {
 }
 
 .expert-pill {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
@@ -1055,7 +1053,7 @@ h1.launch-title em {
 }
 
 .expert-price-box small {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -1124,9 +1122,9 @@ h1.launch-title em {
   padding: 18px 5%;
   background: var(--red);
   color: #ffffff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
@@ -1143,7 +1141,7 @@ h1.launch-title em {
 }
 
 .specialties > span {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   line-height: 1.8;
   color: var(--text-muted);
@@ -1214,7 +1212,7 @@ h1.launch-title em {
   bottom: 24px;
   left: 24px;
   z-index: 1;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   font-weight: 800;
   color: #fff;
@@ -1240,7 +1238,7 @@ h1.launch-title em {
 .studio-story-copy small {
   display: block;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 30px;
 }
 
@@ -1268,7 +1266,7 @@ h1.launch-title em {
 }
 
 .process-card > span {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   font-weight: 800;
   color: var(--red);
@@ -1391,7 +1389,7 @@ input:not([type=checkbox]), select, textarea {
   border-radius: var(--radius-sm);
   padding: 13px 16px;
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
@@ -1589,7 +1587,7 @@ aside small {
 }
 
 .preview-section-title h4 {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1688,7 +1686,7 @@ aside small {
 }
 
 .profile-about-box h4 {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1865,7 +1863,7 @@ aside small {
 }
 
 .upi-header span {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--red);
   letter-spacing: 1px;
@@ -1962,7 +1960,7 @@ aside small {
 }
 
 .tracker-meta-grid span {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
   font-weight: 700;
@@ -2039,7 +2037,7 @@ aside small {
 }
 
 .timeline-label small {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
@@ -2563,7 +2561,7 @@ aside small {
 }
 
 .notif-badge {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1px;
   background: var(--red);
