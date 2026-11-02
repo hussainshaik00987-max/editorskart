@@ -2817,3 +2817,288 @@ aside small {
     transition: none !important;
   }
 }
+
+/* ==========================================================================
+   CREATOR PROFILE & ABOUT SECTION (LOGIN PORTAL)
+   ========================================================================== */
+.creator-profile-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.creator-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  flex-wrap: wrap;
+}
+
+.creator-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.creator-avatar-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e63022 0%, #b82215 100%);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px var(--red-glow);
+  flex-shrink: 0;
+}
+
+.creator-about-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.creator-about-card h4 {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+
+.creator-bio-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+  font-weight: 500;
+}
+
+.creator-details-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.creator-chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: #f8f6f2;
+  border: 1px solid var(--line);
+  color: var(--text-secondary);
+}
+
+.creator-chip.highlight {
+  background: var(--red-light);
+  color: var(--red);
+  border-color: rgba(230, 48, 34, 0.25);
+  font-weight: 700;
+}
+
+.creator-links-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.creator-link-pill {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red);
+  background: var(--red-light);
+  border: 1px solid rgba(230, 48, 34, 0.25);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.creator-link-pill:hover {
+  background: var(--red);
+  color: #ffffff;
+  border-color: var(--red);
+}
+
+/* Live Card Preview Box in Login Section */
+.live-card-preview-box {
+  background: #faf8f5;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.live-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.live-preview-header h4 {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.live-card-compact {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Add / Edit Profile Form */
+.add-profile-form-container {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 26px 28px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.05);
+  margin-top: 16px;
+}
+
+.add-profile-form-container h3 {
+  font-size: 20px;
+  margin: 0 0 6px;
+  color: var(--text-primary);
+}
+
+.add-profile-form-container > p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.packages-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.package-edit-item {
+  background: #faf8f5;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.package-edit-item strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.profile-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+
+/* Application Live Profile Preview */
+.application-profile-preview {
+  background: #faf8f5;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--red);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 20px 0 16px;
+}
+
+.preview-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.preview-badge-row .preview-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: 1px;
+}
+
+.preview-card-compact {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.preview-card-compact .preview-bio {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 4px 0 0;
+}
+
+/* Spotlight animation for expert card */
+@keyframes spotlightGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(230, 48, 34, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(230, 48, 34, 0);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(230, 48, 34, 0);
+    transform: scale(1);
+  }
+}
+
+.expert-card.spotlight-pulse {
+  animation: spotlightGlow 1.2s ease-in-out 2 !important;
+  border-color: var(--red) !important;
+}
